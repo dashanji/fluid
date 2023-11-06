@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-3
+  labels:
+    fuse.serverful.fluid.io/inject: "true"
+    fluid.io/dataset.hbase.sched: required
+spec:
+  containers:
+    - name: nginx-3
+      image: nginx
+      volumeMounts:
+        - mountPath: /data
+          name: hbase-vol
+      #fluid.io/s-default-spark 
+  volumes:
+    - name: hbase-vol
+      persistentVolumeClaim:
+        claimName: spark

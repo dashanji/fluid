@@ -114,6 +114,7 @@ func CheckRelease(name, namespace string) (exist bool, err error) {
 			// TEST SUITE: None
 			// ####### END #######
 			resultLines := strings.Split(string(resultBytes), "\n")
+			fmt.Println("####resultLines#####:", resultLines)
 			for _, line := range resultLines {
 				if strings.HasPrefix(line, "STATUS: ") {
 					if strings.Replace(line, "STATUS: ", "", 1) == "deployed" {

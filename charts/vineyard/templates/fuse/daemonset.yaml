@@ -1,0 +1,113 @@
+# Copyright 2020-2023 Alibaba Group Holding Limited.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+{{- if .Values.fuse.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ template "vineyard.fullname" . }}-fuse
+  labels:
+    app: {{ template "vineyard.name" . }}
+    chart: {{ template "vineyard.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    role: vineyard-fuse
+  ownerReferences:
+  {{- if .Values.owner.enabled }}
+    - apiVersion: {{ .Values.owner.apiVersion }}
+      blockOwnerDeletion: {{ .Values.owner.blockOwnerDeletion }}
+      controller: {{ .Values.owner.controller }}
+      kind: {{ .Values.owner.kind }}
+      name: {{ .Values.owner.name }}
+      uid: {{ .Values.owner.uid }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "vineyard.name" . }}
+      chart: {{ template "vineyard.chart" . }}
+      release: {{ .Release.Name }}
+      heritage: {{ .Release.Service }}
+      role: vineyard-fuse
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: {{ template "vineyard.name" . }}
+        chart: {{ template "vineyard.chart" . }}
+        release: {{ .Release.Name }}
+        heritage: {{ .Release.Service }}
+        role: vineyard-fuse
+    spec:
+      {{- if .Values.fuse.criticalPod }}
+      priorityClassName: system-node-critical
+      {{- end }}
+      nodeSelector:
+      {{- if .Values.fuse.nodeSelector }}
+{{ toYaml .Values.fuse.nodeSelector | trim | indent 8  }}
+      {{- else if .Values.nodeSelector }}
+{{ toYaml .Values.nodeSelector | trim | indent 8  }}
+      {{- end }}
+      tolerations:
+        - operator: Exists
+      containers:
+        - name: vineyard-fuse
+          {{- if .Values.fuse.imageTag }}
+          image: {{ .Values.fuse.image }}:{{ .Values.fuse.imageTag }}
+          {{- else }}
+          image: {{ .Values.fuse.image }}
+          {{- end }}
+          imagePullPolicy: {{ .Values.fuse.imagePullPolicy }}
+          env:
+            - name: FLUID_RUNTIME_TYPE
+              value: "vineyard"
+            - name: FLUID_RUNTIME_NS
+              value: {{ .Values.runtimeIdentity.namespace | quote }}
+            - name: FLUID_RUNTIME_NAME
+              value: {{ .Values.runtimeIdentity.name | quote }}
+          {{- if .Values.fuse.envs }}
+{{ toYaml .Values.fuse.envs | trim | indent 12 }}
+          {{- end }}
+          securityContext:
+            privileged: true
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "umount {{ .Values.fuse.targetPath }}"]
+          {{- if .Values.fuse.livenessProbe }}
+          livenessProbe:
+{{ toYaml .Values.fuse.livenessProbe | trim | indent 12  }}
+          {{- end }}
+          {{- if .Values.fuse.readinessProbe }}
+          readinessProbe:
+{{ toYaml .Values.fuse.readinessProbe | trim | indent 12  }}
+          {{- end }}
+          volumeMounts:
+          - name: vineyard-fuse-mount
+            mountPath: {{ .Values.fuse.targetPath | dir }}
+            mountPropagation: Bidirectional
+          - name: vineyard-fuse
+            mountPath: /runtime-mnt/vineyard/{{ .Release.Namespace }}/{{ template "vineyard.fullname" . }}/vineyard-fuse/dummy-path
+      restartPolicy: Always
+      volumes:
+        - name: vineyard-fuse-mount
+          hostPath:
+            path: {{ .Values.fuse.targetPath | dir }}
+            type: DirectoryOrCreate
+        - name: vineyard-fuse
+          configMap:
+            name: dummy-configmap
+{{- end }}
