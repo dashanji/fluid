@@ -14,13 +14,16 @@
 #
 
 {{- $clientPort := int .Values.etcd.service.ports.client }}
-{{- $clientProtocol := .Values.etcd.service.protocol }}
+{{- $peerPort := int .Values.etcd.service.ports.peer }}
 apiVersion: v1
 kind: Service
 metadata:
+  name: {{ template "vineyard.name" . }}-etcd-headless-svc
   labels:
-    etcd_node: {{ template "vineyard.fullname" . }}-etcd-svc
-  name: {{ template "vineyard.fullname" . }}-etcd-svc
+    app: {{ template "vineyard.name" . }}
+    chart: {{ template "vineyard.chart" . }}
+    release: {{ .Release.Name }}
+    role: etcd-headless-svc
   {{- if .Values.owner.enabled }}
   ownerReferences:
   - apiVersion: {{ .Values.owner.apiVersion }}
@@ -31,13 +34,19 @@ metadata:
     uid: {{ .Values.owner.uid }}
   {{- end }}
 spec:
-  ports:
-  - name: client
-    port: {{ $clientPort }}
-    protocol: {{ $clientProtocol }}
-    targetPort: {{ $clientPort }}
+  type: ClusterIP
+  clusterIP: None
   selector:
     app: {{ template "vineyard.name" . }}
     chart: {{ template "vineyard.chart" . }}
     release: {{ .Release.Name }}
     role: etcd
+  ports:
+    - name: client
+      port: {{ $clientPort }}
+      targetPort: {{ $clientPort }}
+      protocol: {{ .Values.etcd.service.protocol }}
+    - name: peer
+      port: {{ $peerPort }}
+      targetPort: {{ $peerPort }}
+      protocol: {{ .Values.etcd.service.protocol }}

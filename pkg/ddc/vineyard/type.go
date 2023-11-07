@@ -36,9 +36,11 @@ type Vineyard struct {
 	Vineyardd       `json:"vineyardd,omitempty"`
 	RuntimeIdentity common.RuntimeIdentity `json:"runtimeIdentity"`
 
+	Etcd  `json:"etcd,omitempty"`
 	Owner *common.OwnerReference `json:"owner,omitempty"`
 
-	Fuse `json:"fuse,omitempty"`
+	Fuse          `json:"fuse,omitempty"`
+	ClusterDomain string `json:"clusterDomain,omitempty"`
 }
 
 type HadoopConfig struct {
@@ -146,6 +148,42 @@ type Vineyardd struct {
 	Metric `json:"metric,omitempty"`
 }
 
+type Etcd struct {
+	Replicas   int32          `json:"replicas,omitempty"`
+	Service    EtcdService    `json:"service,omitempty"`
+	Auth       EtcdAuth       `json:"auth,omitempty"`
+	Persistent EtcdPersistent `json:"persistent,omitempty"`
+}
+
+type EtcdService struct {
+	Type     string    `json:"type,omitempty"`
+	Protocol string    `json:"protocol,omitempty"`
+	Ports    EtcdPorts `json:"ports,omitempty"`
+}
+
+type Transport struct {
+	SecureTransport bool `json:"secureTransport"`
+}
+
+type EtcdAuth struct {
+	Client Transport `json:"client,omitempty"`
+	Peer   Transport `json:"peer,omitempty"`
+}
+
+type EtcdPersistent struct {
+	Enabled          bool              `json:"enabled"`
+	Annotaions       map[string]string `json:"annotations,omitempty"`
+	Labels           map[string]string `json:"labels,omitempty"`
+	StorageClassName string            `json:"storageClassName,omitempty"`
+	AccessModes      []string          `json:"accessModes,omitempty"`
+	Size             string            `json:"size,omitempty"`
+	Selector         map[string]string `json:"selector,omitempty"`
+}
+
+type EtcdPorts struct {
+	Client int `json:"client,omitempty"`
+	Peer   int `json:"peer,omitempty"`
+}
 type Restore struct {
 	Enabled bool   `json:"enabled,omitempty"`
 	Path    string `json:"path,omitempty"`

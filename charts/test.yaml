@@ -1,0 +1,446 @@
+---
+# Source: vineyard/templates/config/mount-vineyard-socket-conf.yaml
+# Copyright 2020-2023 Alibaba Group Holding Limited.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vineyard-mount-config
+  labels:
+    app: vineyard
+    chart: vineyard-0.17.3
+    release: vineyard
+    heritage: Helm
+    role: vineyard-socket-mount-config
+  ownerReferences:
+    - apiVersion: data.fluid.io/v1alpha1
+      blockOwnerDeletion: false
+      controller: true
+      kind: VineyardRuntime
+      name: vineyard
+      uid: 06c3bb6e-e1c7-4590-9353-9fa2e845f48d
+data:
+  mount-vineyard-socket.sh: |
+    #!/bin/sh
+    set -ex
+    mkdir -p /runtime-mnt/vineyard/default/vineyard/vineyard-fuse
+    while true; do
+      if [ ! -S "/runtime-mnt/vineyard/default/vineyard/vineyard-fuse/vineyard.sock" ]; then
+          mount --bind /runtime-mnt/vineyard/default/vineyard /runtime-mnt/vineyard/default/vineyard/vineyard-fuse
+      fi
+      sleep 10
+    done
+---
+# Source: vineyard/templates/etcd/headless-service.yaml
+# Copyright 2020-2023 Alibaba Group Holding Limited.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+apiVersion: v1
+kind: Service
+metadata:
+  name: vineyard-etcd-headless-svc
+  labels:
+    app: vineyard
+    chart: vineyard-0.17.3
+    release: vineyard
+    role: etcd-headless-svc
+  ownerReferences:
+  - apiVersion: data.fluid.io/v1alpha1
+    blockOwnerDeletion: false
+    controller: true
+    kind: VineyardRuntime
+    name: vineyard
+    uid: 06c3bb6e-e1c7-4590-9353-9fa2e845f48d
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app: vineyard
+    chart: vineyard-0.17.3
+    release: vineyard
+    role: etcd
+  ports:
+    - name: client
+      port: 2379
+      targetPort: 2379
+      protocol: TCP
+    - name: peer
+      port: 2379
+      targetPort: 2379
+      protocol: TCP
+---
+# Source: vineyard/templates/etcd/service.yaml
+# Copyright 2020-2023 Alibaba Group Holding Limited.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    etcd_node: vineyard-etcd-svc
+  name: vineyard-etcd-svc
+  ownerReferences:
+  - apiVersion: data.fluid.io/v1alpha1
+    blockOwnerDeletion: false
+    controller: true
+    kind: VineyardRuntime
+    name: vineyard
+    uid: 06c3bb6e-e1c7-4590-9353-9fa2e845f48d
+spec:
+  ports:
+  - name: client
+    port: 2379
+    protocol: TCP
+    targetPort: 2379
+  selector:
+    app: vineyard
+    chart: vineyard-0.17.3
+    release: vineyard
+    role: etcd
+---
+# Source: vineyard/templates/fuse/daemonset.yaml
+# Copyright 2020-2023 Alibaba Group Holding Limited.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: vineyard-fuse
+  labels:
+    app: vineyard
+    chart: vineyard-0.17.3
+    release: vineyard
+    heritage: Helm
+    role: vineyard-fuse
+  ownerReferences:
+    - apiVersion: data.fluid.io/v1alpha1
+      blockOwnerDeletion: false
+      controller: true
+      kind: VineyardRuntime
+      name: vineyard
+      uid: 06c3bb6e-e1c7-4590-9353-9fa2e845f48d
+spec:
+  selector:
+    matchLabels:
+      app: vineyard
+      chart: vineyard-0.17.3
+      release: vineyard
+      heritage: Helm
+      role: vineyard-fuse
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: vineyard
+        chart: vineyard-0.17.3
+        release: vineyard
+        heritage: Helm
+        role: vineyard-fuse
+    spec:
+      nodeSelector:
+        fluid.io/f-default-vineyard: "true"
+      tolerations:
+        - operator: Exists
+      containers:
+        - name: vineyard-fuse
+          image: busybox:latest
+          command: ["/bin/sh"]
+          args: ["-c", "/runtime-mnt/vineyard/default/vineyard/vineyard-fuse/mount-config/mount-vineyard-socket.sh"]
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: true
+          env:
+            - name: FLUID_RUNTIME_TYPE
+              value: "vineyard"
+            - name: FLUID_RUNTIME_NS
+              value: "default"
+            - name: FLUID_RUNTIME_NAME
+              value: "vineyard"
+          securityContext:
+            privileged: true
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "umount /runtime-mnt/vineyard/default/vineyard/vineyard-fuse"]
+          volumeMounts:
+          - name: vineyard-fuse-mount
+            mountPath: /runtime-mnt/vineyard/default/vineyard
+            mountPropagation: Bidirectional
+          - name: vineyard-socket-conf
+            mountPath: /runtime-mnt/vineyard/default/vineyard/vineyard-fuse/mount-config
+      restartPolicy: Always
+      volumes:
+        - name: vineyard-fuse-mount
+          hostPath:
+            path: /runtime-mnt/vineyard/default/vineyard
+            type: DirectoryOrCreate
+        - name: vineyard-socket-conf
+          configMap:
+            name: vineyard-mount-config
+---
+# Source: vineyard/templates/etcd/statefulset.yaml
+# Copyright 2020-2023 Alibaba Group Holding Limited.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: vineyard-etcd
+  labels:
+    app: vineyard
+    chart: vineyard-0.17.3
+    release: vineyard
+    role: etcd
+  ownerReferences:
+  - apiVersion: data.fluid.io/v1alpha1
+    blockOwnerDeletion: false
+    controller: true
+    kind: VineyardRuntime
+    name: vineyard
+    uid: 06c3bb6e-e1c7-4590-9353-9fa2e845f48d
+spec:
+  serviceName: etcd
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vineyard
+      chart: vineyard-0.17.3
+      release: vineyard
+      role: etcd
+  template:
+    metadata:
+      labels:
+        app: vineyard
+        chart: vineyard-0.17.3
+        release: vineyard
+        role: etcd
+    spec:
+      containers:
+        - name: etcd
+          image: vineyardcloudnative/vineyardd:latest
+          command:
+            - etcd
+            - --name=$(POD_NAME)
+            - --initial-advertise-peer-urls=http://$(POD_NAME).vineyard-etcd-headless-svc.default.svc.:2379
+            - --listen-peer-urls=http://0.0.0.0:2379
+            - --advertise-client-urls=http://$(POD_NAME).vineyard-etcd-headless-svc.default.svc.:2379
+            - --listen-client-urls=http://0.0.0.0:2379
+            - --initial-cluster-token=my-etcd-cluster
+            - --initial-cluster-state=new
+            - --initial-cluster=vineyard-etcd-0=http://vineyard-etcd-0.vineyard-etcd-headless-svc.default.svc.%!s(<nil>):2379
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ETCD_DATA_DIR
+              value: "/etcd/data"
+          ports:
+            - name: client
+              containerPort: 2379
+              protocol: TCP
+            - name: peer
+              containerPort: 2379
+              protocol: TCP
+          volumeMounts:
+            - name: etcd-data
+              mountPath: /etcd
+      volumes:
+      - name: etcd-data
+        emptyDir: {}
+---
+# Source: vineyard/templates/vineyardd/statefulset.yaml
+# Copyright 2020-2023 Alibaba Group Holding Limited.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: vineyard-vineyardd
+  labels:
+    app: vineyard
+    chart: vineyard-0.17.3
+    release: vineyard
+    role: vineyardd
+    fluid.io/dataset: default-vineyard
+  ownerReferences:
+  - apiVersion: data.fluid.io/v1alpha1
+    blockOwnerDeletion: false
+    controller: true
+    kind: VineyardRuntime
+    name: vineyard
+    uid: 06c3bb6e-e1c7-4590-9353-9fa2e845f48d
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: vineyard
+      chart: vineyard-0.17.3
+      release: vineyard
+      role: vineyardd
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: vineyard
+        chart: vineyard-0.17.3
+        release: vineyard
+        heritage: Helm
+        role: vineyardd
+        fluid.io/dataset: default-vineyard
+    spec:
+      containers:
+        - name: vineyardd
+          image: vineyardcloudnative/vineyardd:latest
+          imagePullPolicy: 
+          command:
+          - /bin/bash
+          - -c
+          - >
+            /usr/bin/wait-for-it.sh -t 60 vineyard-etcd-svc.default.svc.:2379;
+            sleep 1;
+            /usr/local/bin/vineyardd
+            --socket /var/run/vineyard.sock
+            --size 
+            --etcd_cmd etcd
+            --etcd_prefix /vineyard
+            --etcd_endpoint http://vineyard-etcd-svc.default.svc.:2379
+          env:
+          - name: VINEYARDD_NAME
+            value: vineyard-vineyardd
+          - name: VINEYARDD_NAMESPACE
+            value: default
+          - name: MY_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: MY_UID
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.uid
+          - name: MY_POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: MY_HOST_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: USER
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          ports:
+            - name: rpc
+              containerPort: 9600
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: 9600
+            periodSeconds: 60
+          readinessProbe:
+            exec:
+              command:
+              - ls
+              - /var/run/vineyard.sock
+          volumeMounts:
+          - name: vineyard-socket-volume
+            mountPath: /var/run
+          - name: shm
+            mountPath: /dev/shm
+      volumes:
+      - name: shm
+        emptyDir:
+          medium: Memory
+      - name: vineyard-socket-volume
+        hostPath:
+          path: /runtime-mnt/vineyard/default/vineyard
+          type: DirectoryOrCreate
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/instance
+                    operator: In
+                    values:
+                     - default-vineyard
+              topologyKey: "kubernetes.io/hostname"

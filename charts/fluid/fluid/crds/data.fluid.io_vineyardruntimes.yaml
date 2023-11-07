@@ -35,11 +35,91 @@ spec:
           spec:
             description: VineyardRuntimeSpec defines the desired state of VineyardRuntime
             properties:
-              etcdReplicas:
-                default: 1
-                description: EtcdReplicas describe the etcd replicas
-                format: int32
-                type: integer
+              clusterDomain:
+                default: cluster.local
+                description: ClusterDomain is the domain of cluster
+                type: string
+              etcd:
+                description: Etcd is the configuration of etcd
+                properties:
+                  enableSecureTransport:
+                    default: false
+                    description: EnableSecureTransport is the flag of enabling secure
+                      transport
+                    type: boolean
+                  persistent:
+                    description: Persistent is the configuration of persistent volume
+                      claim
+                    properties:
+                      accessModes:
+                        description: AccessModes is the access modes of persistent
+                          volume claim
+                        items:
+                          type: string
+                        type: array
+                      annotations:
+                        additionalProperties:
+                          type: string
+                        description: Annotaions is the annotations of persistent volume
+                          claim
+                        type: object
+                      enabled:
+                        default: false
+                        description: Enable persistent
+                        type: boolean
+                      labels:
+                        additionalProperties:
+                          type: string
+                        description: Labels is the labels of persistent volume claim
+                        type: object
+                      selector:
+                        additionalProperties:
+                          type: string
+                        description: Selector is the selector of persistent volume
+                          claim
+                        type: object
+                      size:
+                        default: ""
+                        description: Size is the size of persistent volume claim
+                        type: string
+                      storageClassName:
+                        default: ""
+                        description: StorageClassName is the storage class name of
+                          persistent volume claim
+                        type: string
+                    type: object
+                  replicas:
+                    default: 1
+                    description: Replicas is the number of etcd pods to deploy
+                    format: int32
+                    type: integer
+                  service:
+                    description: Service is the configuration of etcd service
+                    properties:
+                      clientPort:
+                        default: 2379
+                        description: ClientPort is the port of etcd client
+                        format: int32
+                        type: integer
+                      enabled:
+                        default: false
+                        description: Enable service
+                        type: boolean
+                      peerPort:
+                        default: 2380
+                        description: PeerPort is the port of etcd peer
+                        format: int32
+                        type: integer
+                      protocol:
+                        default: TCP
+                        description: Protocol is the protocol of service
+                        type: string
+                      type:
+                        default: ClusterIP
+                        description: Type is the type of service
+                        type: string
+                    type: object
+                type: object
               fuse:
                 description: Fuse is the configuration of vineyard fuse
                 properties:
@@ -56,7 +136,7 @@ spec:
                       otherwise the affinity should be considered
                     type: boolean
                   image:
-                    default: vineyardcloudnative/mount-vineyard-socket
+                    default: busybox
                     description: the image of vineyard fuse (mount vineyard socket)
                     type: string
                   imagePullPolicy:

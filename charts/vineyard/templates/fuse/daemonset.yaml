@@ -24,8 +24,8 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
     role: vineyard-fuse
-  ownerReferences:
   {{- if .Values.owner.enabled }}
+  ownerReferences:
     - apiVersion: {{ .Values.owner.apiVersion }}
       blockOwnerDeletion: {{ .Values.owner.blockOwnerDeletion }}
       controller: {{ .Values.owner.controller }}
@@ -70,7 +70,11 @@ spec:
           {{- else }}
           image: {{ .Values.fuse.image }}
           {{- end }}
+          command: ["/bin/sh"]
+          args: ["-c", "/runtime-mnt/vineyard/{{ .Release.Namespace }}/{{ template "vineyard.fullname" . }}/mount-config/mount-vineyard-socket.sh"]
           imagePullPolicy: {{ .Values.fuse.imagePullPolicy }}
+          securityContext:
+            privileged: true
           env:
             - name: FLUID_RUNTIME_TYPE
               value: "vineyard"
@@ -99,7 +103,9 @@ spec:
           - name: vineyard-fuse-mount
             mountPath: {{ .Values.fuse.targetPath | dir }}
             mountPropagation: Bidirectional
-          - name: vineyard-fuse
+          - name: vineyard-socket-conf
+            mountPath: /runtime-mnt/vineyard/{{ .Release.Namespace }}/{{ template "vineyard.fullname" . }}/mount-config
+          - name: vineyard-fuse-dummy
             mountPath: /runtime-mnt/vineyard/{{ .Release.Namespace }}/{{ template "vineyard.fullname" . }}/vineyard-fuse/dummy-path
       restartPolicy: Always
       volumes:
@@ -107,7 +113,10 @@ spec:
           hostPath:
             path: {{ .Values.fuse.targetPath | dir }}
             type: DirectoryOrCreate
-        - name: vineyard-fuse
+        - name: vineyard-socket-conf
           configMap:
-            name: dummy-configmap
+            name: {{ template "vineyard.fullname" . }}-mount-config
+        - name: vineyard-fuse-dummy
+          configMap:
+            name: {{ template "vineyard.fullname" . }}-mount-config
 {{- end }}

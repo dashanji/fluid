@@ -25,6 +25,28 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 
 {{/*
+Return the proper etcd peer protocol
+*/}}
+{{- define "etcd.peerProtocol" -}}
+{{- if .Values.etcd.auth.peer.secureTransport -}}
+{{- print "https" -}}
+{{- else -}}
+{{- print "http" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the proper etcd client protocol
+*/}}
+{{- define "etcd.clientProtocol" -}}
+{{- if .Values.etcd.auth.client.secureTransport -}}
+{{- print "https" -}}
+{{- else -}}
+{{- print "http" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "vineyard.chart" -}}

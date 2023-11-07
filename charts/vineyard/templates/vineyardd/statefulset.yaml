@@ -13,6 +13,9 @@
 # limitations under the License.
 #
 
+{{- $etcdClientProtocol := include "etcd.clientProtocol" . }}
+{{- $etcdClientPort := int .Values.etcd.service.ports.client }}
+{{- $clusterDomain := .Values.clusterDomain }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -23,8 +26,8 @@ metadata:
     release: {{ .Release.Name }}
     role: vineyardd
     fluid.io/dataset: {{ .Release.Namespace }}-{{ .Release.Name }}
-  ownerReferences:
   {{- if .Values.owner.enabled }}
+  ownerReferences:
   - apiVersion: {{ .Values.owner.apiVersion }}
     blockOwnerDeletion: {{ .Values.owner.blockOwnerDeletion }}
     controller: {{ .Values.owner.controller }}
@@ -82,7 +85,7 @@ spec:
           - /bin/bash
           - -c
           - >
-            /usr/bin/wait-for-it.sh -t 60 {{ template "vineyard.fullname" . }}-etcd-service.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }}:2379;
+            /usr/bin/wait-for-it.sh -t 60 {{ template "vineyard.fullname" . }}-etcd-svc.{{ .Release.Namespace }}.svc.{{ $clusterDomain }}:{{ $etcdClientPort }};
             sleep 1;
             /usr/local/bin/vineyardd
             {{- if .Values.vineyardd.socketPath }}
@@ -96,7 +99,7 @@ spec:
             {{- end }}
             --etcd_cmd etcd
             --etcd_prefix /vineyard
-            --etcd_endpoint http://{{ template "vineyard.fullname" . }}-etcd-service:2379
+            --etcd_endpoint {{ $etcdClientProtocol }}://{{ template "vineyard.fullname" . }}-etcd-svc.{{ .Release.Namespace }}.svc.{{ $clusterDomain }}:{{ $etcdClientPort }}
             {{- if .Values.vineyardd.spill.enabled }}
             --spill_path {{ .Values.vineyardd.spill.path }}
             --spill_lower_rate {{ .Values.vineyardd.spill.spillLowerRate }}

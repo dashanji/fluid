@@ -33,6 +33,7 @@ func (e *VineyardEngine) transform(runtime *datav1alpha1.VineyardRuntime) (value
 	}
 	defer utils.TimeTrack(time.Now(), "VineyardRuntime.Transform", "name", runtime.Name)
 
+	fmt.Println("transform vineyard runtime", *runtime)
 	_, err = utils.GetDataset(e.Client, e.name, e.namespace)
 	if err != nil {
 		return value, err
@@ -73,6 +74,68 @@ func (e *VineyardEngine) transform(runtime *datav1alpha1.VineyardRuntime) (value
 
 	value.Vineyardd = vineyardd
 
+	etcdService := &EtcdService{
+		Type:     runtime.Spec.Etcd.Service.Type,
+		Protocol: runtime.Spec.Etcd.Service.Protocol,
+		Ports: EtcdPorts{
+			Client: int(runtime.Spec.Etcd.Service.ClientPort),
+			Peer:   int(runtime.Spec.Etcd.Service.PeerPort),
+		},
+	}
+	fmt.Println("service", *etcdService)
+
+	auth := &EtcdAuth{
+		Client: Transport{
+			SecureTransport: runtime.Spec.Etcd.EnableSecureTransport,
+		},
+		Peer: Transport{
+			SecureTransport: runtime.Spec.Etcd.EnableSecureTransport,
+		},
+	}
+	fmt.Println("auth: ", *auth)
+	persistent := &EtcdPersistent{
+		Enabled:          runtime.Spec.Etcd.Persistent.Enabled,
+		Annotaions:       runtime.Spec.Etcd.Persistent.Annotaions,
+		Labels:           runtime.Spec.Etcd.Persistent.Labels,
+		StorageClassName: runtime.Spec.Etcd.Persistent.StorageClassName,
+		AccessModes:      runtime.Spec.Etcd.Persistent.AccessModes,
+		Size:             runtime.Spec.Etcd.Persistent.Size,
+		Selector:         runtime.Spec.Etcd.Persistent.Selector,
+	}
+	fmt.Println("persistent: ", *persistent)
+	etcd := Etcd{
+		Replicas: runtime.Spec.Etcd.Replicas,
+		Persistent: EtcdPersistent{
+			Enabled:          runtime.Spec.Etcd.Persistent.Enabled,
+			Annotaions:       runtime.Spec.Etcd.Persistent.Annotaions,
+			Labels:           runtime.Spec.Etcd.Persistent.Labels,
+			StorageClassName: runtime.Spec.Etcd.Persistent.StorageClassName,
+			AccessModes:      runtime.Spec.Etcd.Persistent.AccessModes,
+			Size:             runtime.Spec.Etcd.Persistent.Size,
+			Selector:         runtime.Spec.Etcd.Persistent.Selector,
+		},
+		Service: EtcdService{
+			Type:     runtime.Spec.Etcd.Service.Type,
+			Protocol: runtime.Spec.Etcd.Service.Protocol,
+			Ports: EtcdPorts{
+				Client: int(runtime.Spec.Etcd.Service.ClientPort),
+				Peer:   int(runtime.Spec.Etcd.Service.PeerPort),
+			},
+		},
+		Auth: EtcdAuth{
+			Client: Transport{
+				SecureTransport: runtime.Spec.Etcd.EnableSecureTransport,
+			},
+			Peer: Transport{
+				SecureTransport: runtime.Spec.Etcd.EnableSecureTransport,
+			},
+		},
+	}
+	e.Log.Info("etcd value is", "value", etcd)
+	fmt.Println("etcd: ", etcd)
+	value.Etcd = etcd
+	e.Log.Info("before value is", "value", value)
+	fmt.Println("before value is: ", value)
 	fuse := Fuse{
 		Enabled:         true,
 		Image:           runtime.Spec.Fuse.Image,
@@ -90,5 +153,7 @@ func (e *VineyardEngine) transform(runtime *datav1alpha1.VineyardRuntime) (value
 		value.Fuse.NodeSelector = runtime.Spec.Fuse.NodeSelector
 	}
 	value.Fuse.NodeSelector[e.getFuseLabelName()] = "true"
+
+	value.ClusterDomain = runtime.Spec.ClusterDomain
 	return value, nil
 }

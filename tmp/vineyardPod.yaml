@@ -4,7 +4,7 @@ metadata:
   labels:
     fuse.serverful.fluid.io/inject: "true"
     fluid.io/dataset.vineyard.sched: required
-  name: nginx1
+  name: app
 spec:
   containers:
   - command:
@@ -13,7 +13,7 @@ spec:
     - sleep 3600
     image: python:3.10
     imagePullPolicy: IfNotPresent
-    name: nginx-3
+    name: app
     volumeMounts:
     - mountPath: /data
       name: vineyard-vol

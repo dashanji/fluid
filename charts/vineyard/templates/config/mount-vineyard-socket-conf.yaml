@@ -1,0 +1,45 @@
+# Copyright 2020-2023 Alibaba Group Holding Limited.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "vineyard.fullname" . }}-mount-config
+  labels:
+    app: {{ template "vineyard.name" . }}
+    chart: {{ template "vineyard.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    role: vineyard-socket-mount-config
+  {{- if .Values.owner.enabled }}
+  ownerReferences:
+    - apiVersion: {{ .Values.owner.apiVersion }}
+      blockOwnerDeletion: {{ .Values.owner.blockOwnerDeletion }}
+      controller: {{ .Values.owner.controller }}
+      kind: {{ .Values.owner.kind }}
+      name: {{ .Values.owner.name }}
+      uid: {{ .Values.owner.uid }}
+  {{- end }}
+data:
+  mount-vineyard-socket.sh: |
+    #!/bin/sh
+    set -ex
+    mkdir -p /runtime-mnt/vineyard/{{ .Release.Namespace }}/{{ template "vineyard.fullname" . }}/vineyard-fuse
+    while true; do
+      if [ ! -S "/runtime-mnt/vineyard/{{ .Release.Namespace }}/{{ template "vineyard.fullname" . }}/vineyard-fuse/vineyard.sock" ]; then
+          mount --bind /runtime-mnt/vineyard/{{ .Release.Namespace }}/{{ template "vineyard.fullname" . }} /runtime-mnt/vineyard/{{ .Release.Namespace }}/{{ template "vineyard.fullname" . }}/vineyard-fuse
+      fi
+      sleep 10
+    done

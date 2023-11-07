@@ -45,6 +45,33 @@ vineyardd:
 
   env: {}
 
+etcd:
+  replicas: 1
+
+  service:
+    enabled: true
+    type: ClusterIP
+    protocol: TCP
+    ports:
+      client: 2379
+      peer: 2380
+  
+  auth:
+    client:
+      secureTransport: false
+    peer:
+      secureTransport: false
+
+  persistent:
+    enabled: false
+    annotataions: {}
+    labels: {}
+    accessModes:
+    - ReadWriteOnce
+    size: 8Gi
+    selector: {}
+    storgeClassName: standard
+
 fuse:
   enabled: true
   image: vineyardcloudnative/mount-vineyard-socket

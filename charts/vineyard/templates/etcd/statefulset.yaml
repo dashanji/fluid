@@ -1,0 +1,139 @@
+# Copyright 2020-2023 Alibaba Group Holding Limited.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+{{- $replicas := int .Values.etcd.replicas }}
+{{- $clientPort := int .Values.etcd.service.ports.client }}
+{{- $peerPort := int .Values.etcd.service.ports.peer }}
+{{- $fullName := include "vineyard.name" . -}}
+{{- $etcdFullname := (printf "%s-%s" $fullName "etcd") }}
+{{- $releaseNamespace := .Release.Namespace }}
+{{- $etcdHeadlessServiceName := (printf "%s-%s" $etcdFullname "headless-svc") }}
+{{- $clusterDomain := .Values.clusterDomain }}
+{{- $etcdPeerProtocol := include "etcd.peerProtocol" . }}
+{{- $etcdClientProtocol := include "etcd.clientProtocol" . }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $etcdFullname }}
+  labels:
+    app: {{ template "vineyard.name" . }}
+    chart: {{ template "vineyard.chart" . }}
+    release: {{ .Release.Name }}
+    role: etcd
+  {{- if .Values.owner.enabled }}
+  ownerReferences:
+  - apiVersion: {{ .Values.owner.apiVersion }}
+    blockOwnerDeletion: {{ .Values.owner.blockOwnerDeletion }}
+    controller: {{ .Values.owner.controller }}
+    kind: {{ .Values.owner.kind }}
+    name: {{ .Values.owner.name }}
+    uid: {{ .Values.owner.uid }}
+  {{- end }}
+spec:
+  serviceName: etcd
+  replicas: {{ $replicas }}
+  selector:
+    matchLabels:
+      app: {{ template "vineyard.name" . }}
+      chart: {{ template "vineyard.chart" . }}
+      release: {{ .Release.Name }}
+      role: etcd
+  template:
+    metadata:
+      labels:
+        app: {{ template "vineyard.name" . }}
+        chart: {{ template "vineyard.chart" . }}
+        release: {{ .Release.Name }}
+        role: etcd
+    spec:
+      containers:
+        - name: etcd
+          {{- if .Values.vineyardd.imageTag }}
+          image: {{ .Values.vineyardd.image }}:{{ .Values.vineyardd.imageTag }}
+          {{- else }}
+          image: {{ .Values.vineyardd.image }}
+          {{- end }}
+          command:
+            - etcd
+            - --name=$(POD_NAME)
+            - --initial-advertise-peer-urls={{ $etcdPeerProtocol }}://$(POD_NAME).{{ $etcdHeadlessServiceName }}.{{ .Release.Namespace }}.svc.{{ $clusterDomain }}:{{ $peerPort }}
+            - --listen-peer-urls={{ $etcdPeerProtocol }}://0.0.0.0:{{ $peerPort }}
+            - --advertise-client-urls={{ $etcdClientProtocol }}://$(POD_NAME).{{ $etcdHeadlessServiceName }}.{{ .Release.Namespace }}.svc.{{ $clusterDomain }}:{{ $clientPort }}
+            - --listen-client-urls={{ $etcdClientProtocol }}://0.0.0.0:{{ $clientPort }}
+            - --initial-cluster-token=my-etcd-cluster
+            - --initial-cluster-state=new
+            {{- $initialCluster := list }}
+            {{- range $e, $i := until $replicas }}
+            {{- $initialCluster = append $initialCluster (printf "%s-%d=%s://%s-%d.%s.%s.svc.%s:%d" $etcdFullname $i $etcdPeerProtocol $etcdFullname $i $etcdHeadlessServiceName $releaseNamespace $clusterDomain $peerPort) }}
+            {{- end }}
+            - --initial-cluster={{ join "," $initialCluster }}
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ETCD_DATA_DIR
+              value: "/etcd/data"
+          ports:
+            - name: client
+              containerPort: {{ $clientPort }}
+              protocol: {{ .Values.etcd.service.protocol }}
+            - name: peer
+              containerPort: {{ $peerPort }}
+              protocol: {{ .Values.etcd.service.protocol }}
+          volumeMounts:
+            - name: etcd-data
+              mountPath: /etcd
+      volumes:
+      {{- if .Values.etcd.persistent.enabled }}
+      - name: etcd-data
+      persistentVolumeClaim:
+        claimName: etcd-data
+      {{- else }}
+      - name: etcd-data
+        emptyDir: {}
+      {{- end }}
+    {{- if .Values.etcd.persistent.enabled }}
+    volumeClaimTemplates:
+    - metadata:
+        name: etcd-data
+        {{- if .Values.etcd.persistent.annotations }}
+        annotations: 
+        {{- range $key, $val := .Values.etcd.persistent.annotations }}
+          {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- end }}
+        {{- if .Values.etcd.persistent.labels }}
+        labels:
+        {{- range $key, $val := .Values.etcd.persistent.labels }}
+          {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- end }}
+      spec:
+        accessModes:
+        {{- range .Values.etcd.persistent.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.etcd.persistent.size | quote }}
+        {{- if .Values.etcd.persistent.selector }}
+        selector:
+        {{- range $key, $val := .Values.etcd.persistent.selector }}
+          {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- end }}
+        storageClassName: {{ .Values.etcd.persistent.storageClassName | quote }}
+    {{- end }}

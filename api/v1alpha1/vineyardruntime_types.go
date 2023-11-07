@@ -121,7 +121,7 @@ type VineyarddTemplateSpec struct {
 type FuseTemplateSpec struct {
 	// the image of vineyard fuse (mount vineyard socket)
 	// +kubebuilder:validation:Optional
-	// +kubebuilder:default:="vineyardcloudnative/mount-vineyard-socket"
+	// +kubebuilder:default:="busybox"
 	Image string `json:"image,omitempty"`
 
 	// the image pull policy of vineyard fuse image (mount vineyard socket)
@@ -170,6 +170,92 @@ type FuseTemplateSpec struct {
 	VolumeMounts []corev1.VolumeMount `json:"volumeMounts,omitempty"`
 }
 
+type EtcdTemplateSpec struct {
+	// Replicas is the number of etcd pods to deploy
+	// +kubebuilder:validation:Required
+	// +kubebuilder:default:=1
+	Replicas int32 `json:"replicas,omitempty"`
+
+	// EnableSecureTransport is the flag of enabling secure transport
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:=false
+	EnableSecureTransport bool `json:"enableSecureTransport,omitempty"`
+
+	// Service is the configuration of etcd service
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:={}
+	Service EtcdService `json:"service,omitempty"`
+
+	// Persistent is the configuration of persistent volume claim
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:={}
+	Persistent Persistent `json:"persistent,omitempty"`
+}
+
+type EtcdService struct {
+	// Enable service
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:=false
+	Enabled bool `json:"enabled,omitempty"`
+
+	// Type is the type of service
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:="ClusterIP"
+	Type string `json:"type,omitempty"`
+
+	// Protocol is the protocol of service
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:="TCP"
+	Protocol string `json:"protocol,omitempty"`
+
+	// ClientPort is the port of etcd client
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:=2379
+	ClientPort int32 `json:"clientPort,omitempty"`
+
+	// PeerPort is the port of etcd peer
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:=2380
+	PeerPort int32 `json:"peerPort,omitempty"`
+}
+
+type Persistent struct {
+	// Enable persistent
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:=false
+	Enabled bool `json:"enabled,omitempty"`
+
+	// Annotaions is the annotations of persistent volume claim
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:={}
+	Annotaions map[string]string `json:"annotations,omitempty"`
+
+	// Labels is the labels of persistent volume claim
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:={}
+	Labels map[string]string `json:"labels,omitempty"`
+
+	// StorageClassName is the storage class name of persistent volume claim
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:=""
+	StorageClassName string `json:"storageClassName,omitempty"`
+
+	// AccessModes is the access modes of persistent volume claim
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:={}
+	AccessModes []string `json:"accessModes,omitempty"`
+
+	// Size is the size of persistent volume claim
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:=""
+	Size string `json:"size,omitempty"`
+
+	// Selector is the selector of persistent volume claim
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:={}
+	Selector map[string]string `json:"selector,omitempty"`
+}
+
 // VineyardRuntimeSpec defines the desired state of VineyardRuntime
 type VineyardRuntimeSpec struct {
 	// Replicas is the number of vineyardd pods to deploy
@@ -177,20 +263,25 @@ type VineyardRuntimeSpec struct {
 	// +kubebuilder:default:=3
 	Replicas int32 `json:"replicas,omitempty"`
 
-	// EtcdReplicas describe the etcd replicas
-	// +kubebuilder:validation:Optional
-	// +kubebuilder:default:=1
-	EtcdReplicas int32 `json:"etcdReplicas,omitempty"`
-
 	// Vineyardd is the configuration of vineyardd
 	// +kubebuilder:validation:Optional
 	// +kubebuilder:default:={}
 	Vineyardd VineyarddTemplateSpec `json:"vineyardd,omitempty"`
 
+	// Etcd is the configuration of etcd
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:={}
+	Etcd EtcdTemplateSpec `json:"etcd,omitempty"`
+
 	// Fuse is the configuration of vineyard fuse
 	// +kubebuilder:validation:Optional
 	// +kubebuilder:default:={}
 	Fuse FuseTemplateSpec `json:"fuse,omitempty"`
+
+	// ClusterDomain is the domain of cluster
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:="cluster.local"
+	ClusterDomain string `json:"clusterDomain,omitempty"`
 }
 
 //+kubebuilder:object:root=true
