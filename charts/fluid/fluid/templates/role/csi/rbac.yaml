@@ -26,6 +26,7 @@ rules:
       - thinruntimes/status
       - efcruntimes/status
       - datasets/status
+      - vineyardruntimes/status
     verbs: ["get", "list", "watch"]
   - apiGroups: [""]
     resources: ["persistentvolumes"]

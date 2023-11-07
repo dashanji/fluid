@@ -1,0 +1,68 @@
+# This is the default configuration file for Vineyard helm chart.  
+
+
+fullnameOverride: vineyard
+
+# the configurations of vineyardd deployment
+vineyardd:
+  replicas: 3
+
+  annotations: {}
+  labels: {}
+
+  nodeSelector: {}
+  tolerations: {}
+
+  # the image of vineyardd
+  image: vineyardcloudnative/vineyardd
+  imageTag: latest
+  imagePullPolicy: IfNotPresent
+  
+  # the following is the configurations of vineyardd server
+
+  # shared memory size for vineyardd
+  # the format could be 256Mi, 256M or 256000 
+  size: 256Mi
+
+  # Whether to reserve enough physical memory pages for vineyardd
+  reserveMomery: false
+
+  socketPath: /var/run
+
+  # Spilling data from memory to storage when the data size 
+  # exceeds the available memory capacity
+  spill:
+    enabled: false
+    path: ""
+    pvcName: ""
+    spillLowerRate:
+    spillUpperRate: 
+
+  metric:
+    enabled: false
+    image: vineyardcloudnative/vineyardd-grok-exporter
+    imagePullPolicy: IfNotPresent
+
+  env: {}
+
+fuse:
+  enabled: true
+  image: vineyardcloudnative/mount-vineyard-socket
+  imageTag: latest
+  imagePullPolicy: IfNotPresent
+  targetPath: ""
+
+runtimeIdentity:
+  namespace: default
+  name: xxx
+
+owner:
+  enabled: false
+  name: ""
+  kind: ""
+  uid: ""
+  apiVersion: ""
+  blockOwnerDeletion: false
+  controller: false
+
+clusterDomain: cluster.local

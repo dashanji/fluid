@@ -20,10 +20,11 @@ package deploy
 import (
 	"context"
 	"fmt"
-	"github.com/fluid-cloudnative/fluid/pkg/utils"
-	"github.com/pkg/errors"
 	"reflect"
 	"strconv"
+
+	"github.com/fluid-cloudnative/fluid/pkg/utils"
+	"github.com/pkg/errors"
 
 	"github.com/fluid-cloudnative/fluid/pkg/common"
 	"github.com/go-logr/logr"
@@ -47,6 +48,7 @@ func ScaleoutRuntimeContollerOnDemand(c client.Client, datasetKey types.Namespac
 	controllerName string, scaleout bool, err error) {
 
 	for myControllerName, checkRuntime := range precheckFuncs {
+		fmt.Println("find the checkRuntime func", myControllerName)
 		match, err := checkRuntime(c, datasetKey)
 		if err != nil {
 			return controllerName, scaleout, err

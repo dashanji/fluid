@@ -527,6 +527,7 @@ func (e *AlluxioEngine) transformShortCircuit(runtimeInfo base.RuntimeInfoInterf
 	// Disable short circuit when using emptyDir as the volume type of any tieredstore level.
 	for _, level := range runtimeInfo.GetTieredStoreInfo().Levels {
 		if level.VolumeType == common.VolumeTypeEmptyDir {
+			fmt.Println("enableShortCircuit = false")
 			enableShortCircuit = false
 			break
 		}

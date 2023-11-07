@@ -23,6 +23,7 @@ import (
 	"github.com/fluid-cloudnative/fluid/pkg/ddc/jindofsx"
 	"github.com/fluid-cloudnative/fluid/pkg/ddc/juicefs"
 	"github.com/fluid-cloudnative/fluid/pkg/ddc/thin"
+	"github.com/fluid-cloudnative/fluid/pkg/ddc/vineyard"
 	cruntime "github.com/fluid-cloudnative/fluid/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 
@@ -43,15 +44,17 @@ func init() {
 		"juicefs":    juicefs.Build,
 		"thin":       thin.Build,
 		"efc":        efc.Build,
+		"vineyard":   vineyard.Build,
 	}
 
 	deploy.SetPrecheckFunc(map[string]deploy.CheckFunc{
-		"alluxioruntime-controller": alluxio.Precheck,
-		"jindoruntime-controller":   jindofsx.Precheck,
-		"juicefsruntime-controller": juicefs.Precheck,
-		"goosefsruntime-controller": goosefs.Precheck,
-		"thinruntime-controller":    thin.Precheck,
-		"efcruntime-controller":     efc.Precheck,
+		"alluxioruntime-controller":  alluxio.Precheck,
+		"jindoruntime-controller":    jindofsx.Precheck,
+		"juicefsruntime-controller":  juicefs.Precheck,
+		"goosefsruntime-controller":  goosefs.Precheck,
+		"thinruntime-controller":     thin.Precheck,
+		"efcruntime-controller":      efc.Precheck,
+		"vineyardruntime-controller": vineyard.Precheck,
 	})
 }
 

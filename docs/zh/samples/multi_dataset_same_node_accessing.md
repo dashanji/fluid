@@ -63,7 +63,7 @@ spec:
               operator: In
               values:
                 - "multi-dataset"
-  placement: "Shared" 
+  placement: "Shared"
 
 EOF        
 ```

@@ -1,2068 +1,2068 @@
 {
-  "swagger": "2.0",
-  "info": {
-    "description": "client for fluid",
-    "title": "fluid",
-    "version": "v0.1"
-  },
-  "paths": {},
-  "definitions": {
-    ".APIGatewayStatus": {
-      "description": "API Gateway",
-      "type": "object",
-      "properties": {
-        "endpoint": {
-          "description": "Endpoint for accessing",
-          "type": "string"
-        }
-      }
+    "swagger": "2.0",
+    "info": {
+      "description": "client for fluid",
+      "title": "fluid",
+      "version": "v0.1"
     },
-    ".AlluxioCompTemplateSpec": {
-      "description": "AlluxioCompTemplateSpec is a description of the Alluxio commponents",
-      "type": "object",
-      "properties": {
-        "enabled": {
-          "description": "Enabled or Disabled for the components. For now, only  API Gateway is enabled or disabled.",
-          "type": "boolean"
-        },
-        "env": {
-          "description": "Environment variables that will be used by Alluxio component. \u003cbr\u003e",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "jvmOptions": {
-          "description": "Options for JVM",
-          "type": "array",
-          "items": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "nodeSelector": {
-          "description": "NodeSelector is a selector which must be true for the master to fit on a node",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "ports": {
-          "description": "Ports used by Alluxio(e.g. rpc: 19998 for master)",
-          "type": "object",
-          "additionalProperties": {
-            "type": "integer",
-            "format": "int32",
-            "default": 0
-          }
-        },
+    "paths": {},
+    "definitions": {
+      ".APIGatewayStatus": {
+        "description": "API Gateway",
+        "type": "object",
         "properties": {
-          "description": "Configurable properties for the Alluxio component. \u003cbr\u003e Refer to \u003ca href=\"https://docs.alluxio.io/os/user/stable/en/reference/Properties-List.html\"\u003eAlluxio Configuration Properties\u003c/a\u003e for more info",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
+          "endpoint": {
+            "description": "Endpoint for accessing",
+            "type": "string"
           }
-        },
-        "replicas": {
-          "description": "Replicas is the desired number of replicas of the given template. If unspecified, defaults to 1. replicas is the min replicas of dataset in the cluster",
-          "type": "integer",
-          "format": "int32"
-        },
-        "resources": {
-          "description": "Resources that will be requested by the Alluxio component. \u003cbr\u003e \u003cbr\u003e Resources are not allowed for ephemeral containers. Ephemeral containers use spare resources already allocated to the pod.",
-          "default": {},
-          "$ref": "#/definitions/v1.ResourceRequirements"
         }
-      }
-    },
-    ".AlluxioFuseSpec": {
-      "description": "AlluxioFuseSpec is a description of the Alluxio Fuse",
-      "type": "object",
-      "properties": {
-        "args": {
-          "description": "Arguments that will be passed to Alluxio Fuse",
-          "type": "array",
-          "items": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "cleanPolicy": {
-          "description": "CleanPolicy decides when to clean Alluxio Fuse pods. Currently Fluid supports two policies: OnDemand and OnRuntimeDeleted OnDemand cleans fuse pod once th fuse pod on some node is not needed OnRuntimeDeleted cleans fuse pod only when the cache runtime is deleted Defaults to OnRuntimeDeleted",
-          "type": "string"
-        },
-        "env": {
-          "description": "Environment variables that will be used by Alluxio Fuse",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "global": {
-          "description": "If the fuse client should be deployed in global mode, otherwise the affinity should be considered",
-          "type": "boolean"
-        },
-        "image": {
-          "description": "Image for Alluxio Fuse(e.g. alluxio/alluxio-fuse)",
-          "type": "string"
-        },
-        "imagePullPolicy": {
-          "description": "One of the three policies: `Always`, `IfNotPresent`, `Never`",
-          "type": "string"
-        },
-        "imageTag": {
-          "description": "Image Tag for Alluxio Fuse(e.g. 2.3.0-SNAPSHOT)",
-          "type": "string"
-        },
-        "jvmOptions": {
-          "description": "Options for JVM",
-          "type": "array",
-          "items": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "nodeSelector": {
-          "description": "NodeSelector is a selector which must be true for the fuse client to fit on a node, this option only effect when global is enabled",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
+      },
+      ".AlluxioCompTemplateSpec": {
+        "description": "AlluxioCompTemplateSpec is a description of the Alluxio commponents",
+        "type": "object",
         "properties": {
-          "description": "Configurable properties for Alluxio System. \u003cbr\u003e Refer to \u003ca href=\"https://docs.alluxio.io/os/user/stable/en/reference/Properties-List.html\"\u003eAlluxio Configuration Properties\u003c/a\u003e for more info",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "resources": {
-          "description": "Resources that will be requested by Alluxio Fuse. \u003cbr\u003e \u003cbr\u003e Resources are not allowed for ephemeral containers. Ephemeral containers use spare resources already allocated to the pod.",
-          "default": {},
-          "$ref": "#/definitions/v1.ResourceRequirements"
-        }
-      }
-    },
-    ".AlluxioRuntime": {
-      "description": "AlluxioRuntime is the Schema for the alluxioruntimes API",
-      "type": "object",
-      "properties": {
-        "apiVersion": {
-          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
-          "type": "string"
-        },
-        "kind": {
-          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
-          "type": "string"
-        },
-        "metadata": {
-          "default": {},
-          "$ref": "#/definitions/v1.ObjectMeta"
-        },
-        "spec": {
-          "default": {},
-          "$ref": "#/definitions/.AlluxioRuntimeSpec"
-        },
-        "status": {
-          "default": {},
-          "$ref": "#/definitions/.RuntimeStatus"
-        }
-      }
-    },
-    ".AlluxioRuntimeList": {
-      "description": "AlluxioRuntimeList contains a list of AlluxioRuntime",
-      "type": "object",
-      "required": [
-        "items"
-      ],
-      "properties": {
-        "apiVersion": {
-          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
-          "type": "string"
-        },
-        "items": {
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/.AlluxioRuntime"
-          }
-        },
-        "kind": {
-          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
-          "type": "string"
-        },
-        "metadata": {
-          "default": {},
-          "$ref": "#/definitions/v1.ListMeta"
-        }
-      }
-    },
-    ".AlluxioRuntimeSpec": {
-      "description": "AlluxioRuntimeSpec defines the desired state of AlluxioRuntime",
-      "type": "object",
-      "properties": {
-        "alluxioVersion": {
-          "description": "The version information that instructs fluid to orchestrate a particular version of Alluxio.",
-          "default": {},
-          "$ref": "#/definitions/.VersionSpec"
-        },
-        "apiGateway": {
-          "description": "The component spec of Alluxio API Gateway",
-          "default": {},
-          "$ref": "#/definitions/.AlluxioCompTemplateSpec"
-        },
-        "data": {
-          "description": "Management strategies for the dataset to which the runtime is bound",
-          "default": {},
-          "$ref": "#/definitions/.Data"
-        },
-        "disablePrometheus": {
-          "description": "Disable monitoring for Alluxio Runtime Prometheus is enabled by default",
-          "type": "boolean"
-        },
-        "fuse": {
-          "description": "The component spec of Alluxio Fuse",
-          "default": {},
-          "$ref": "#/definitions/.AlluxioFuseSpec"
-        },
-        "hadoopConfig": {
-          "description": "Name of the configMap used to support HDFS configurations when using HDFS as Alluxio's UFS. The configMap must be in the same namespace with the AlluxioRuntime. The configMap should contain user-specific HDFS conf files in it. For now, only \"hdfs-site.xml\" and \"core-site.xml\" are supported. It must take the filename of the conf file as the key and content of the file as the value.",
-          "type": "string"
-        },
-        "initUsers": {
-          "description": "The spec of init users",
-          "default": {},
-          "$ref": "#/definitions/.InitUsersSpec"
-        },
-        "jobMaster": {
-          "description": "The component spec of Alluxio job master",
-          "default": {},
-          "$ref": "#/definitions/.AlluxioCompTemplateSpec"
-        },
-        "jobWorker": {
-          "description": "The component spec of Alluxio job Worker",
-          "default": {},
-          "$ref": "#/definitions/.AlluxioCompTemplateSpec"
-        },
-        "jvmOptions": {
-          "description": "Options for JVM",
-          "type": "array",
-          "items": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "master": {
-          "description": "The component spec of Alluxio master",
-          "default": {},
-          "$ref": "#/definitions/.AlluxioCompTemplateSpec"
-        },
-        "properties": {
-          "description": "Configurable properties for Alluxio system. \u003cbr\u003e Refer to \u003ca href=\"https://docs.alluxio.io/os/user/stable/en/reference/Properties-List.html\"\u003eAlluxio Configuration Properties\u003c/a\u003e for more info",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "replicas": {
-          "description": "The replicas of the worker, need to be specified",
-          "type": "integer",
-          "format": "int32"
-        },
-        "runAs": {
-          "description": "Manage the user to run Alluxio Runtime",
-          "$ref": "#/definitions/.User"
-        },
-        "tieredstore": {
-          "description": "Tiered storage used by Alluxio",
-          "default": {},
-          "$ref": "#/definitions/.TieredStore"
-        },
-        "worker": {
-          "description": "The component spec of Alluxio worker",
-          "default": {},
-          "$ref": "#/definitions/.AlluxioCompTemplateSpec"
-        }
-      }
-    },
-    ".BackupLocation": {
-      "description": "BackupLocation describes the final backup location of DataBackup",
-      "type": "object",
-      "properties": {
-        "nodeName": {
-          "description": "NodeName describes the nodeName of backup if Path is in the form of local://subpath",
-          "type": "string"
-        },
-        "path": {
-          "description": "Path describes the path of backup, in the form of local:///absolutePath or pvc://\u003cpvcName\u003e/subpath",
-          "type": "string"
-        }
-      }
-    },
-    ".CacheableNodeAffinity": {
-      "description": "CacheableNodeAffinity defines constraints that limit what nodes this dataset can be cached to.",
-      "type": "object",
-      "properties": {
-        "required": {
-          "description": "Required specifies hard node constraints that must be met.",
-          "$ref": "#/definitions/v1.NodeSelector"
-        }
-      }
-    },
-    ".Condition": {
-      "description": "Condition explains the transitions on phase",
-      "type": "object",
-      "required": [
-        "type",
-        "status"
-      ],
-      "properties": {
-        "lastProbeTime": {
-          "description": "LastProbeTime describes last time this condition was updated.",
-          "default": {},
-          "$ref": "#/definitions/v1.Time"
-        },
-        "lastTransitionTime": {
-          "description": "LastTransitionTime describes last time the condition transitioned from one status to another.",
-          "default": {},
-          "$ref": "#/definitions/v1.Time"
-        },
-        "message": {
-          "description": "Message is a human-readable message indicating details about the transition",
-          "type": "string"
-        },
-        "reason": {
-          "description": "Reason for the condition's last transition",
-          "type": "string"
-        },
-        "status": {
-          "description": "Status of the condition, one of `True`, `False` or `Unknown`",
-          "type": "string",
-          "default": ""
-        },
-        "type": {
-          "description": "Type of condition, either `Complete` or `Failed`",
-          "type": "string",
-          "default": ""
-        }
-      }
-    },
-    ".Data": {
-      "description": "Data management strategies",
-      "type": "object",
-      "properties": {
-        "pin": {
-          "description": "Pin the dataset or not. Refer to \u003ca href=\"https://docs.alluxio.io/os/user/stable/en/operation/User-CLI.html#pin\"\u003eAlluxio User-CLI pin\u003c/a\u003e",
-          "type": "boolean",
-          "default": false
-        },
-        "replicas": {
-          "description": "The copies of the dataset",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        }
-      }
-    },
-    ".DataBackup": {
-      "description": "DataBackup is the Schema for the backup API",
-      "type": "object",
-      "properties": {
-        "apiVersion": {
-          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
-          "type": "string"
-        },
-        "kind": {
-          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
-          "type": "string"
-        },
-        "metadata": {
-          "default": {},
-          "$ref": "#/definitions/v1.ObjectMeta"
-        },
-        "spec": {
-          "default": {},
-          "$ref": "#/definitions/.DataBackupSpec"
-        },
-        "status": {
-          "default": {},
-          "$ref": "#/definitions/.DataBackupStatus"
-        }
-      }
-    },
-    ".DataBackupList": {
-      "description": "DataBackupList contains a list of DataBackup",
-      "type": "object",
-      "required": [
-        "items"
-      ],
-      "properties": {
-        "apiVersion": {
-          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
-          "type": "string"
-        },
-        "items": {
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/.DataBackup"
-          }
-        },
-        "kind": {
-          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
-          "type": "string"
-        },
-        "metadata": {
-          "default": {},
-          "$ref": "#/definitions/v1.ListMeta"
-        }
-      }
-    },
-    ".DataBackupSpec": {
-      "description": "DataBackupSpec defines the desired state of DataBackup",
-      "type": "object",
-      "properties": {
-        "backupPath": {
-          "description": "BackupPath defines the target path to save data of the DataBackup",
-          "type": "string"
-        },
-        "dataset": {
-          "description": "Dataset defines the target dataset of the DataBackup",
-          "type": "string"
-        },
-        "runAs": {
-          "description": "Manage the user to run Alluxio DataBackup",
-          "$ref": "#/definitions/.User"
-        }
-      }
-    },
-    ".DataBackupStatus": {
-      "description": "DataBackupStatus defines the observed state of DataBackup",
-      "type": "object",
-      "required": [
-        "phase",
-        "duration",
-        "conditions"
-      ],
-      "properties": {
-        "backupLocation": {
-          "description": "BackupLocation tell user the location to save data of the DataBackup",
-          "default": {},
-          "$ref": "#/definitions/.BackupLocation"
-        },
-        "conditions": {
-          "description": "Conditions consists of transition information on DataBackup's Phase",
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/.Condition"
-          }
-        },
-        "duration": {
-          "description": "Duration tell user how much time was spent to backup",
-          "type": "string",
-          "default": ""
-        },
-        "phase": {
-          "description": "Phase describes current phase of DataBackup",
-          "type": "string",
-          "default": ""
-        }
-      }
-    },
-    ".DataLoad": {
-      "description": "DataLoad is the Schema for the dataloads API",
-      "type": "object",
-      "properties": {
-        "apiVersion": {
-          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
-          "type": "string"
-        },
-        "kind": {
-          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
-          "type": "string"
-        },
-        "metadata": {
-          "default": {},
-          "$ref": "#/definitions/v1.ObjectMeta"
-        },
-        "spec": {
-          "default": {},
-          "$ref": "#/definitions/.DataLoadSpec"
-        },
-        "status": {
-          "default": {},
-          "$ref": "#/definitions/.DataLoadStatus"
-        }
-      }
-    },
-    ".DataLoadList": {
-      "description": "DataLoadList contains a list of DataLoad",
-      "type": "object",
-      "required": [
-        "items"
-      ],
-      "properties": {
-        "apiVersion": {
-          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
-          "type": "string"
-        },
-        "items": {
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/.DataLoad"
-          }
-        },
-        "kind": {
-          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
-          "type": "string"
-        },
-        "metadata": {
-          "default": {},
-          "$ref": "#/definitions/v1.ListMeta"
-        }
-      }
-    },
-    ".DataLoadSpec": {
-      "description": "DataLoadSpec defines the desired state of DataLoad",
-      "type": "object",
-      "properties": {
-        "dataset": {
-          "description": "Dataset defines the target dataset of the DataLoad",
-          "default": {},
-          "$ref": "#/definitions/.TargetDataset"
-        },
-        "loadMetadata": {
-          "description": "LoadMetadata specifies if the dataload job should load metadata",
-          "type": "boolean"
-        },
-        "options": {
-          "description": "Options specifies the extra dataload properties for runtime",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "target": {
-          "description": "Target defines target paths that needs to be loaded",
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/.TargetPath"
-          }
-        }
-      }
-    },
-    ".DataLoadStatus": {
-      "description": "DataLoadStatus defines the observed state of DataLoad",
-      "type": "object",
-      "required": [
-        "phase",
-        "conditions",
-        "duration"
-      ],
-      "properties": {
-        "conditions": {
-          "description": "Conditions consists of transition information on DataLoad's Phase",
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/.Condition"
-          }
-        },
-        "duration": {
-          "description": "Duration tell user how much time was spent to load the data",
-          "type": "string",
-          "default": ""
-        },
-        "phase": {
-          "description": "Phase describes current phase of DataLoad",
-          "type": "string",
-          "default": ""
-        }
-      }
-    },
-    ".DataRestoreLocation": {
-      "description": "DataRestoreLocation describes the spec restore location of  Dataset",
-      "type": "object",
-      "properties": {
-        "nodeName": {
-          "description": "NodeName describes the nodeName of restore if Path is  in the form of local://subpath",
-          "type": "string"
-        },
-        "path": {
-          "description": "Path describes the path of restore, in the form of  local://subpath or pvc://\u003cpvcName\u003e/subpath",
-          "type": "string"
-        }
-      }
-    },
-    ".Dataset": {
-      "description": "Dataset is the Schema for the datasets API",
-      "type": "object",
-      "properties": {
-        "apiVersion": {
-          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
-          "type": "string"
-        },
-        "kind": {
-          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
-          "type": "string"
-        },
-        "metadata": {
-          "default": {},
-          "$ref": "#/definitions/v1.ObjectMeta"
-        },
-        "spec": {
-          "default": {},
-          "$ref": "#/definitions/.DatasetSpec"
-        },
-        "status": {
-          "default": {},
-          "$ref": "#/definitions/.DatasetStatus"
-        }
-      }
-    },
-    ".DatasetCondition": {
-      "description": "Condition describes the state of the cache at a certain point.",
-      "type": "object",
-      "required": [
-        "type",
-        "status"
-      ],
-      "properties": {
-        "lastTransitionTime": {
-          "description": "Last time the condition transitioned from one status to another.",
-          "default": {},
-          "$ref": "#/definitions/v1.Time"
-        },
-        "lastUpdateTime": {
-          "description": "The last time this condition was updated.",
-          "default": {},
-          "$ref": "#/definitions/v1.Time"
-        },
-        "message": {
-          "description": "A human readable message indicating details about the transition.",
-          "type": "string"
-        },
-        "reason": {
-          "description": "The reason for the condition's last transition.",
-          "type": "string"
-        },
-        "status": {
-          "description": "Status of the condition, one of True, False, Unknown.",
-          "type": "string",
-          "default": ""
-        },
-        "type": {
-          "description": "Type of cache condition.",
-          "type": "string",
-          "default": ""
-        }
-      }
-    },
-    ".DatasetList": {
-      "description": "DatasetList contains a list of Dataset",
-      "type": "object",
-      "required": [
-        "items"
-      ],
-      "properties": {
-        "apiVersion": {
-          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
-          "type": "string"
-        },
-        "items": {
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/.Dataset"
-          }
-        },
-        "kind": {
-          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
-          "type": "string"
-        },
-        "metadata": {
-          "default": {},
-          "$ref": "#/definitions/v1.ListMeta"
-        }
-      }
-    },
-    ".DatasetSpec": {
-      "description": "DatasetSpec defines the desired state of Dataset",
-      "type": "object",
-      "properties": {
-        "accessModes": {
-          "description": "AccessModes contains all ways the volume backing the PVC can be mounted",
-          "type": "array",
-          "items": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "dataRestoreLocation": {
-          "description": "DataRestoreLocation is the location to load data of dataset  been backuped",
-          "$ref": "#/definitions/.DataRestoreLocation"
-        },
-        "mounts": {
-          "description": "Mount Points to be mounted on Alluxio.",
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/.Mount"
-          }
-        },
-        "nodeAffinity": {
-          "description": "NodeAffinity defines constraints that limit what nodes this dataset can be cached to. This field influences the scheduling of pods that use the cached dataset.",
-          "$ref": "#/definitions/.CacheableNodeAffinity"
-        },
-        "owner": {
-          "description": "The owner of the dataset",
-          "$ref": "#/definitions/.User"
-        },
-        "placement": {
-          "description": "Manage switch for opening Multiple datasets single node deployment or not",
-          "type": "string"
-        },
-        "runtimes": {
-          "description": "Runtimes for supporting dataset (e.g. AlluxioRuntime)",
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/.Runtime"
-          }
-        },
-        "tolerations": {
-          "description": "If specified, the pod's tolerations.",
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/v1.Toleration"
-          }
-        }
-      }
-    },
-    ".DatasetStatus": {
-      "description": "DatasetStatus defines the observed state of Dataset",
-      "type": "object",
-      "required": [
-        "conditions"
-      ],
-      "properties": {
-        "cacheStates": {
-          "description": "CacheStatus represents the total resources of the dataset.",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "conditions": {
-          "description": "Conditions is an array of current observed conditions.",
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/.DatasetCondition"
-          }
-        },
-        "dataBackupRef": {
-          "description": "DataBackupRef specifies the running Backup job that targets this Dataset. This is mainly used as a lock to prevent concurrent DataBackup jobs.",
-          "type": "string"
-        },
-        "dataLoadRef": {
-          "description": "DataLoadRef specifies the running DataLoad job that targets this Dataset. This is mainly used as a lock to prevent concurrent DataLoad jobs.",
-          "type": "string"
-        },
-        "fileNum": {
-          "description": "FileNum represents the file numbers of the dataset",
-          "type": "string"
-        },
-        "hcfs": {
-          "description": "HCFSStatus represents hcfs info",
-          "$ref": "#/definitions/.HCFSStatus"
-        },
-        "mounts": {
-          "description": "the info of mount points have been mounted",
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/.Mount"
-          }
-        },
-        "phase": {
-          "description": "Dataset Phase. One of the four phases: `Pending`, `Bound`, `NotBound` and `Failed`",
-          "type": "string"
-        },
-        "runtimes": {
-          "description": "Runtimes for supporting dataset",
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/.Runtime"
-          }
-        },
-        "ufsTotal": {
-          "description": "Total in GB of dataset in the cluster",
-          "type": "string"
-        }
-      }
-    },
-    ".EncryptOption": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "description": "The name of encryptOption",
-          "type": "string"
-        },
-        "valueFrom": {
-          "description": "The valueFrom of encryptOption",
-          "default": {},
-          "$ref": "#/definitions/.EncryptOptionSource"
-        }
-      }
-    },
-    ".EncryptOptionSource": {
-      "type": "object",
-      "properties": {
-        "secretKeyRef": {
-          "description": "The encryptInfo obtained from secret",
-          "default": {},
-          "$ref": "#/definitions/.SecretKeySelector"
-        }
-      }
-    },
-    ".GooseFSCompTemplateSpec": {
-      "description": "GooseFSCompTemplateSpec is a description of the GooseFS commponents",
-      "type": "object",
-      "properties": {
-        "annotations": {
-          "description": "Annotations is an unstructured key value map stored with a resource that may be set by external tools to store and retrieve arbitrary metadata. They are not queryable and should be preserved when modifying objects. More info: http://kubernetes.io/docs/user-guide/annotations",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "enabled": {
-          "description": "Enabled or Disabled for the components. For now, only  API Gateway is enabled or disabled.",
-          "type": "boolean"
-        },
-        "env": {
-          "description": "Environment variables that will be used by GooseFS component. \u003cbr\u003e",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "jvmOptions": {
-          "description": "Options for JVM",
-          "type": "array",
-          "items": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "nodeSelector": {
-          "description": "NodeSelector is a selector which must be true for the master to fit on a node",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "ports": {
-          "description": "Ports used by GooseFS(e.g. rpc: 19998 for master)",
-          "type": "object",
-          "additionalProperties": {
-            "type": "integer",
-            "format": "int32",
-            "default": 0
-          }
-        },
-        "properties": {
-          "description": "Configurable properties for the GOOSEFS component. \u003cbr\u003e Refer to \u003ca href=\"https://cloud.tencent.com/document/product/436/56415\"\u003eGOOSEFS Configuration Properties\u003c/a\u003e for more info",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "replicas": {
-          "description": "Replicas is the desired number of replicas of the given template. If unspecified, defaults to 1. replicas is the min replicas of dataset in the cluster",
-          "type": "integer",
-          "format": "int32"
-        },
-        "resources": {
-          "description": "Resources that will be requested by the GooseFS component. \u003cbr\u003e \u003cbr\u003e Resources are not allowed for ephemeral containers. Ephemeral containers use spare resources already allocated to the pod.",
-          "default": {},
-          "$ref": "#/definitions/v1.ResourceRequirements"
-        }
-      }
-    },
-    ".GooseFSFuseSpec": {
-      "description": "GooseFSFuseSpec is a description of the GooseFS Fuse",
-      "type": "object",
-      "properties": {
-        "annotations": {
-          "description": "Annotations is an unstructured key value map stored with a resource that may be set by external tools to store and retrieve arbitrary metadata. They are not queryable and should be preserved when modifying objects. More info: http://kubernetes.io/docs/user-guide/annotations",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "args": {
-          "description": "Arguments that will be passed to GooseFS Fuse",
-          "type": "array",
-          "items": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "cleanPolicy": {
-          "description": "CleanPolicy decides when to clean GooseFS Fuse pods. Currently Fluid supports two policies: OnDemand and OnRuntimeDeleted OnDemand cleans fuse pod once th fuse pod on some node is not needed OnRuntimeDeleted cleans fuse pod only when the cache runtime is deleted Defaults to OnRuntimeDeleted",
-          "type": "string"
-        },
-        "env": {
-          "description": "Environment variables that will be used by GooseFS Fuse",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "global": {
-          "description": "If the fuse client should be deployed in global mode, otherwise the affinity should be considered",
-          "type": "boolean"
-        },
-        "image": {
-          "description": "Image for GooseFS Fuse(e.g. goosefs/goosefs-fuse)",
-          "type": "string"
-        },
-        "imagePullPolicy": {
-          "description": "One of the three policies: `Always`, `IfNotPresent`, `Never`",
-          "type": "string"
-        },
-        "imageTag": {
-          "description": "Image Tag for GooseFS Fuse(e.g. v1.0.1)",
-          "type": "string"
-        },
-        "jvmOptions": {
-          "description": "Options for JVM",
-          "type": "array",
-          "items": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "nodeSelector": {
-          "description": "NodeSelector is a selector which must be true for the fuse client to fit on a node, this option only effect when global is enabled",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "properties": {
-          "description": "Configurable properties for the GOOSEFS component. \u003cbr\u003e Refer to \u003ca href=\"https://cloud.tencent.com/document/product/436/56415\"\u003eGOOSEFS Configuration Properties\u003c/a\u003e for more info",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "resources": {
-          "description": "Resources that will be requested by GooseFS Fuse. \u003cbr\u003e \u003cbr\u003e Resources are not allowed for ephemeral containers. Ephemeral containers use spare resources already allocated to the pod.",
-          "default": {},
-          "$ref": "#/definitions/v1.ResourceRequirements"
-        }
-      }
-    },
-    ".GooseFSRuntime": {
-      "description": "GooseFSRuntime is the Schema for the goosefsruntimes API",
-      "type": "object",
-      "properties": {
-        "apiVersion": {
-          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
-          "type": "string"
-        },
-        "kind": {
-          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
-          "type": "string"
-        },
-        "metadata": {
-          "default": {},
-          "$ref": "#/definitions/v1.ObjectMeta"
-        },
-        "spec": {
-          "default": {},
-          "$ref": "#/definitions/.GooseFSRuntimeSpec"
-        },
-        "status": {
-          "default": {},
-          "$ref": "#/definitions/.RuntimeStatus"
-        }
-      }
-    },
-    ".GooseFSRuntimeList": {
-      "description": "GooseFSRuntimeList contains a list of GooseFSRuntime",
-      "type": "object",
-      "required": [
-        "items"
-      ],
-      "properties": {
-        "apiVersion": {
-          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
-          "type": "string"
-        },
-        "items": {
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/.GooseFSRuntime"
-          }
-        },
-        "kind": {
-          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
-          "type": "string"
-        },
-        "metadata": {
-          "default": {},
-          "$ref": "#/definitions/v1.ListMeta"
-        }
-      }
-    },
-    ".GooseFSRuntimeSpec": {
-      "description": "GooseFSRuntimeSpec defines the desired state of GooseFSRuntime",
-      "type": "object",
-      "properties": {
-        "apiGateway": {
-          "description": "The component spec of GooseFS API Gateway",
-          "default": {},
-          "$ref": "#/definitions/.GooseFSCompTemplateSpec"
-        },
-        "data": {
-          "description": "Management strategies for the dataset to which the runtime is bound",
-          "default": {},
-          "$ref": "#/definitions/.Data"
-        },
-        "disablePrometheus": {
-          "description": "Disable monitoring for GooseFS Runtime Prometheus is enabled by default",
-          "type": "boolean"
-        },
-        "fuse": {
-          "description": "The component spec of GooseFS Fuse",
-          "default": {},
-          "$ref": "#/definitions/.GooseFSFuseSpec"
-        },
-        "goosefsVersion": {
-          "description": "The version information that instructs fluid to orchestrate a particular version of GooseFS.",
-          "default": {},
-          "$ref": "#/definitions/.VersionSpec"
-        },
-        "hadoopConfig": {
-          "description": "Name of the configMap used to support HDFS configurations when using HDFS as GooseFS's UFS. The configMap must be in the same namespace with the GooseFSRuntime. The configMap should contain user-specific HDFS conf files in it. For now, only \"hdfs-site.xml\" and \"core-site.xml\" are supported. It must take the filename of the conf file as the key and content of the file as the value.",
-          "type": "string"
-        },
-        "initUsers": {
-          "description": "The spec of init users",
-          "default": {},
-          "$ref": "#/definitions/.InitUsersSpec"
-        },
-        "jobMaster": {
-          "description": "The component spec of GooseFS job master",
-          "default": {},
-          "$ref": "#/definitions/.GooseFSCompTemplateSpec"
-        },
-        "jobWorker": {
-          "description": "The component spec of GooseFS job Worker",
-          "default": {},
-          "$ref": "#/definitions/.GooseFSCompTemplateSpec"
-        },
-        "jvmOptions": {
-          "description": "Options for JVM",
-          "type": "array",
-          "items": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "master": {
-          "description": "The component spec of GooseFS master",
-          "default": {},
-          "$ref": "#/definitions/.GooseFSCompTemplateSpec"
-        },
-        "properties": {
-          "description": "Configurable properties for the GOOSEFS component. \u003cbr\u003e Refer to \u003ca href=\"https://cloud.tencent.com/document/product/436/56415\"\u003eGOOSEFS Configuration Properties\u003c/a\u003e for more info",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "replicas": {
-          "description": "The replicas of the worker, need to be specified",
-          "type": "integer",
-          "format": "int32"
-        },
-        "runAs": {
-          "description": "Manage the user to run GooseFS Runtime GooseFS support POSIX-ACL and Apache Ranger to manager authorization",
-          "$ref": "#/definitions/.User"
-        },
-        "tieredstore": {
-          "description": "Tiered storage used by GooseFS",
-          "default": {},
-          "$ref": "#/definitions/.TieredStore"
-        },
-        "worker": {
-          "description": "The component spec of GooseFS worker",
-          "default": {},
-          "$ref": "#/definitions/.GooseFSCompTemplateSpec"
-        }
-      }
-    },
-    ".HCFSStatus": {
-      "description": "HCFS Endpoint info",
-      "type": "object",
-      "properties": {
-        "endpoint": {
-          "description": "Endpoint for accessing",
-          "type": "string"
-        },
-        "underlayerFileSystemVersion": {
-          "description": "Underlayer HCFS Compatible Version",
-          "type": "string"
-        }
-      }
-    },
-    ".InitUsersSpec": {
-      "description": "InitUsersSpec is a description of the initialize the users for runtime",
-      "type": "object",
-      "properties": {
-        "env": {
-          "description": "Environment variables that will be used by initialize the users for runtime",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "image": {
-          "description": "Image for initialize the users for runtime(e.g. alluxio/alluxio-User init)",
-          "type": "string"
-        },
-        "imagePullPolicy": {
-          "description": "One of the three policies: `Always`, `IfNotPresent`, `Never`",
-          "type": "string"
-        },
-        "imageTag": {
-          "description": "Image Tag for initialize the users for runtime(e.g. 2.3.0-SNAPSHOT)",
-          "type": "string"
-        },
-        "resources": {
-          "description": "Resources that will be requested by initialize the users for runtime. \u003cbr\u003e \u003cbr\u003e Resources are not allowed for ephemeral containers. Ephemeral containers use spare resources already allocated to the pod.",
-          "default": {},
-          "$ref": "#/definitions/v1.ResourceRequirements"
-        }
-      }
-    },
-    ".JindoCompTemplateSpec": {
-      "description": "JindoCompTemplateSpec is a description of the Jindo commponents",
-      "type": "object",
-      "properties": {
-        "env": {
-          "description": "Environment variables that will be used by Jindo component. \u003cbr\u003e",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "labels": {
-          "description": "Labels will be added on all the JindoFS Master or Worker pods. Any label already existed will be overriden",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "nodeSelector": {
-          "description": "NodeSelector is a selector which must be true for the master to fit on a node",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "ports": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "integer",
-            "format": "int32",
-            "default": 0
-          }
-        },
-        "properties": {
-          "description": "Configurable properties for the Jindo component. \u003cbr\u003e",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "replicas": {
-          "description": "Replicas is the desired number of replicas of the given template. If unspecified, defaults to 1. replicas is the min replicas of dataset in the cluster",
-          "type": "integer",
-          "format": "int32"
-        },
-        "resources": {
-          "description": "Resources that will be requested by the Jindo component. \u003cbr\u003e \u003cbr\u003e Resources are not allowed for ephemeral containers. Ephemeral containers use spare resources already allocated to the pod.",
-          "default": {},
-          "$ref": "#/definitions/v1.ResourceRequirements"
-        },
-        "tolerations": {
-          "description": "If specified, the pod's tolerations.",
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/v1.Toleration"
-          }
-        }
-      }
-    },
-    ".JindoFuseSpec": {
-      "description": "JindoFuseSpec is a description of the Jindo Fuse",
-      "type": "object",
-      "properties": {
-        "args": {
-          "description": "Arguments that will be passed to Jindo Fuse",
-          "type": "array",
-          "items": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "cleanPolicy": {
-          "description": "CleanPolicy decides when to clean JindoFS Fuse pods. Currently Fluid supports two policies: OnDemand and OnRuntimeDeleted OnDemand cleans fuse pod once th fuse pod on some node is not needed OnRuntimeDeleted cleans fuse pod only when the cache runtime is deleted Defaults to OnRuntimeDeleted",
-          "type": "string"
-        },
-        "env": {
-          "description": "Environment variables that will be used by Jindo Fuse",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "global": {
-          "description": "If the fuse client should be deployed in global mode, otherwise the affinity should be considered",
-          "type": "boolean"
-        },
-        "image": {
-          "description": "Image for Jindo Fuse(e.g. jindo/jindo-fuse)",
-          "type": "string"
-        },
-        "imagePullPolicy": {
-          "description": "One of the three policies: `Always`, `IfNotPresent`, `Never`",
-          "type": "string"
-        },
-        "imageTag": {
-          "description": "Image Tag for Jindo Fuse(e.g. 2.3.0-SNAPSHOT)",
-          "type": "string"
-        },
-        "labels": {
-          "description": "Labels will be added on all the JindoFS Fuse pods. Any label already existed will be overriden",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "nodeSelector": {
-          "description": "NodeSelector is a selector which must be true for the fuse client to fit on a node, this option only effect when global is enabled",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "properties": {
-          "description": "Configurable properties for Jindo System. \u003cbr\u003e",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "resources": {
-          "description": "Resources that will be requested by Jindo Fuse. \u003cbr\u003e \u003cbr\u003e Resources are not allowed for ephemeral containers. Ephemeral containers use spare resources already allocated to the pod.",
-          "default": {},
-          "$ref": "#/definitions/v1.ResourceRequirements"
-        },
-        "tolerations": {
-          "description": "If specified, the pod's tolerations.",
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/v1.Toleration"
-          }
-        }
-      }
-    },
-    ".JindoRuntime": {
-      "description": "JindoRuntime is the Schema for the jindoruntimes API",
-      "type": "object",
-      "properties": {
-        "apiVersion": {
-          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
-          "type": "string"
-        },
-        "kind": {
-          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
-          "type": "string"
-        },
-        "metadata": {
-          "default": {},
-          "$ref": "#/definitions/v1.ObjectMeta"
-        },
-        "spec": {
-          "default": {},
-          "$ref": "#/definitions/.JindoRuntimeSpec"
-        },
-        "status": {
-          "default": {},
-          "$ref": "#/definitions/.RuntimeStatus"
-        }
-      }
-    },
-    ".JindoRuntimeList": {
-      "description": "JindoRuntimeList contains a list of JindoRuntime",
-      "type": "object",
-      "required": [
-        "items"
-      ],
-      "properties": {
-        "apiVersion": {
-          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
-          "type": "string"
-        },
-        "items": {
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/.JindoRuntime"
-          }
-        },
-        "kind": {
-          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
-          "type": "string"
-        },
-        "metadata": {
-          "default": {},
-          "$ref": "#/definitions/v1.ListMeta"
-        }
-      }
-    },
-    ".JindoRuntimeSpec": {
-      "description": "JindoRuntimeSpec defines the desired state of JindoRuntime",
-      "type": "object",
-      "properties": {
-        "fuse": {
-          "description": "The component spec of Jindo Fuse",
-          "default": {},
-          "$ref": "#/definitions/.JindoFuseSpec"
-        },
-        "hadoopConfig": {
-          "description": "Name of the configMap used to support HDFS configurations when using HDFS as Jindo's UFS. The configMap must be in the same namespace with the JindoRuntime. The configMap should contain user-specific HDFS conf files in it. For now, only \"hdfs-site.xml\" and \"core-site.xml\" are supported. It must take the filename of the conf file as the key and content of the file as the value.",
-          "type": "string"
-        },
-        "jindoVersion": {
-          "description": "The version information that instructs fluid to orchestrate a particular version of Jindo.",
-          "default": {},
-          "$ref": "#/definitions/.VersionSpec"
-        },
-        "labels": {
-          "description": "Labels will be added on all the JindoFS pods.",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "logConfig": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "master": {
-          "description": "The component spec of Jindo master",
-          "default": {},
-          "$ref": "#/definitions/.JindoCompTemplateSpec"
-        },
-        "networkmode": {
-          "description": "Whether to use hostnetwork or not",
-          "type": "string"
-        },
-        "properties": {
-          "description": "Configurable properties for Jindo system. \u003cbr\u003e",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "replicas": {
-          "description": "The replicas of the worker, need to be specified",
-          "type": "integer",
-          "format": "int32"
-        },
-        "runAs": {
-          "description": "Manage the user to run Jindo Runtime",
-          "$ref": "#/definitions/.User"
-        },
-        "secret": {
-          "type": "string"
-        },
-        "tieredstore": {
-          "description": "Tiered storage used by Jindo",
-          "default": {},
-          "$ref": "#/definitions/.TieredStore"
-        },
-        "user": {
-          "type": "string"
-        },
-        "worker": {
-          "description": "The component spec of Jindo worker",
-          "default": {},
-          "$ref": "#/definitions/.JindoCompTemplateSpec"
-        }
-      }
-    },
-    ".JuiceFSCompTemplateSpec": {
-      "description": "JuiceFSCompTemplateSpec is a description of the JuiceFS components",
-      "type": "object",
-      "properties": {
-        "enabled": {
-          "description": "Enabled or Disabled for the components.",
-          "type": "boolean"
-        },
-        "env": {
-          "description": "Environment variables that will be used by JuiceFS component.",
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/v1.EnvVar"
-          }
-        },
-        "nodeSelector": {
-          "description": "NodeSelector is a selector",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "ports": {
-          "description": "Ports used by JuiceFS",
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/v1.ContainerPort"
-          }
-        },
-        "replicas": {
-          "description": "Replicas is the desired number of replicas of the given template. If unspecified, defaults to 1. replicas is the min replicas of dataset in the cluster",
-          "type": "integer",
-          "format": "int32"
-        },
-        "resources": {
-          "description": "Resources that will be requested by the JuiceFS component.",
-          "default": {},
-          "$ref": "#/definitions/v1.ResourceRequirements"
-        }
-      }
-    },
-    ".JuiceFSFuseSpec": {
-      "type": "object",
-      "properties": {
-        "cleanPolicy": {
-          "description": "CleanPolicy decides when to clean Juicefs Fuse pods. Currently Fluid supports two policies: OnDemand and OnRuntimeDeleted OnDemand cleans fuse pod once th fuse pod on some node is not needed OnRuntimeDeleted cleans fuse pod only when the cache runtime is deleted Defaults to OnDemand",
-          "type": "string"
-        },
-        "env": {
-          "description": "Environment variables that will be used by JuiceFS Fuse",
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/v1.EnvVar"
-          }
-        },
-        "global": {
-          "description": "If the fuse client should be deployed in global mode, otherwise the affinity should be considered",
-          "type": "boolean"
-        },
-        "image": {
-          "description": "Image for JuiceFS fuse",
-          "type": "string"
-        },
-        "imagePullPolicy": {
-          "description": "One of the three policies: `Always`, `IfNotPresent`, `Never`",
-          "type": "string"
-        },
-        "imageTag": {
-          "description": "Image for JuiceFS fuse",
-          "type": "string"
-        },
-        "nodeSelector": {
-          "description": "NodeSelector is a selector which must be true for the fuse client to fit on a node, this option only effect when global is enabled",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "resources": {
-          "description": "Resources that will be requested by JuiceFS Fuse.",
-          "default": {},
-          "$ref": "#/definitions/v1.ResourceRequirements"
-        }
-      }
-    },
-    ".JuiceFSRuntime": {
-      "description": "JuiceFSRuntime is the Schema for the juicefsruntimes API",
-      "type": "object",
-      "properties": {
-        "apiVersion": {
-          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
-          "type": "string"
-        },
-        "kind": {
-          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
-          "type": "string"
-        },
-        "metadata": {
-          "default": {},
-          "$ref": "#/definitions/v1.ObjectMeta"
-        },
-        "spec": {
-          "default": {},
-          "$ref": "#/definitions/.JuiceFSRuntimeSpec"
-        },
-        "status": {
-          "default": {},
-          "$ref": "#/definitions/.RuntimeStatus"
-        }
-      }
-    },
-    ".JuiceFSRuntimeList": {
-      "description": "JuiceFSRuntimeList contains a list of JuiceFSRuntime",
-      "type": "object",
-      "required": [
-        "items"
-      ],
-      "properties": {
-        "apiVersion": {
-          "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
-          "type": "string"
-        },
-        "items": {
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/.JuiceFSRuntime"
-          }
-        },
-        "kind": {
-          "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
-          "type": "string"
-        },
-        "metadata": {
-          "default": {},
-          "$ref": "#/definitions/v1.ListMeta"
-        }
-      }
-    },
-    ".JuiceFSRuntimeSpec": {
-      "description": "JuiceFSRuntimeSpec defines the desired state of JuiceFSRuntime",
-      "type": "object",
-      "properties": {
-        "disablePrometheus": {
-          "description": "Disable monitoring for JuiceFS Runtime Prometheus is enabled by default",
-          "type": "boolean"
-        },
-        "fuse": {
-          "description": "Desired state for JuiceFS Fuse",
-          "default": {},
-          "$ref": "#/definitions/.JuiceFSFuseSpec"
-        },
-        "initUsers": {
-          "description": "The spec of init users",
-          "default": {},
-          "$ref": "#/definitions/.InitUsersSpec"
-        },
-        "jobWorker": {
-          "description": "The component spec of JuiceFS job Worker",
-          "default": {},
-          "$ref": "#/definitions/.JuiceFSCompTemplateSpec"
-        },
-        "juicefsVersion": {
-          "description": "The version information that instructs fluid to orchestrate a particular version of JuiceFS.",
-          "default": {},
-          "$ref": "#/definitions/.VersionSpec"
-        },
-        "master": {
-          "description": "The component spec of JuiceFS master",
-          "default": {},
-          "$ref": "#/definitions/.JuiceFSCompTemplateSpec"
-        },
-        "replicas": {
-          "description": "The replicas of the worker, need to be specified",
-          "type": "integer",
-          "format": "int32"
-        },
-        "runAs": {
-          "description": "Manage the user to run Juicefs Runtime",
-          "$ref": "#/definitions/.User"
-        },
-        "tieredstore": {
-          "description": "Tiered storage used by JuiceFS",
-          "default": {},
-          "$ref": "#/definitions/.TieredStore"
-        },
-        "worker": {
-          "description": "The component spec of JuiceFS worker",
-          "default": {},
-          "$ref": "#/definitions/.JuiceFSCompTemplateSpec"
-        }
-      }
-    },
-    ".Level": {
-      "description": "Level describes configurations a tier needs. \u003cbr\u003e Refer to \u003ca href=\"https://docs.alluxio.io/os/user/stable/en/core-services/Caching.html#configuring-tiered-storage\"\u003eConfiguring Tiered Storage\u003c/a\u003e for more info",
-      "type": "object",
-      "required": [
-        "mediumtype"
-      ],
-      "properties": {
-        "high": {
-          "description": "Ratio of high watermark of the tier (e.g. 0.9)",
-          "type": "string"
-        },
-        "low": {
-          "description": "Ratio of low watermark of the tier (e.g. 0.7)",
-          "type": "string"
-        },
-        "mediumtype": {
-          "description": "Medium Type of the tier. One of the three types: `MEM`, `SSD`, `HDD`",
-          "type": "string",
-          "default": ""
-        },
-        "path": {
-          "description": "File paths to be used for the tier. Multiple paths are supported. Multiple paths should be separated with comma. For example: \"/mnt/cache1,/mnt/cache2\".",
-          "type": "string"
-        },
-        "quota": {
-          "description": "Quota for the whole tier. (e.g. 100Gi) Please note that if there're multiple paths used for this tierstore, the quota will be equally divided into these paths. If you'd like to set quota for each, path, see QuotaList for more information.",
-          "$ref": "#/definitions/k8s.io.apimachinery.pkg.api.resource.Quantity"
-        },
-        "quotaList": {
-          "description": "QuotaList are quotas used to set quota on multiple paths. Quotas should be separated with comma. Quotas in this list will be set to paths with the same order in Path. For example, with Path defined with \"/mnt/cache1,/mnt/cache2\" and QuotaList set to \"100Gi, 50Gi\", then we get 100GiB cache storage under \"/mnt/cache1\" and 50GiB under \"/mnt/cache2\". Also note that num of quotas must be consistent with the num of paths defined in Path.",
-          "type": "string"
-        }
-      }
-    },
-    ".Mount": {
-      "description": "Mount describes a mounting. \u003cbr\u003e Refer to \u003ca href=\"https://docs.alluxio.io/os/user/stable/en/ufs/S3.html\"\u003eAlluxio Storage Integrations\u003c/a\u003e for more info",
-      "type": "object",
-      "properties": {
-        "encryptOptions": {
-          "description": "The secret information",
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/.EncryptOption"
-          }
-        },
-        "mountPoint": {
-          "description": "MountPoint is the mount point of source.",
-          "type": "string"
-        },
-        "name": {
-          "description": "The name of mount",
-          "type": "string"
-        },
-        "options": {
-          "description": "The Mount Options. \u003cbr\u003e Refer to \u003ca href=\"https://docs.alluxio.io/os/user/stable/en/reference/Properties-List.html\"\u003eMount Options\u003c/a\u003e.  \u003cbr\u003e The option has Prefix 'fs.' And you can Learn more from \u003ca href=\"https://docs.alluxio.io/os/user/stable/en/ufs/S3.html\"\u003eThe Storage Integrations\u003c/a\u003e",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "path": {
-          "description": "The path of mount, if not set will be /{Name}",
-          "type": "string"
-        },
-        "readOnly": {
-          "description": "Optional: Defaults to false (read-write).",
-          "type": "boolean"
-        },
-        "shared": {
-          "description": "Optional: Defaults to false (shared).",
-          "type": "boolean"
-        }
-      }
-    },
-    ".Runtime": {
-      "description": "Runtime describes a runtime to be used to support dataset",
-      "type": "object",
-      "properties": {
-        "category": {
-          "description": "Category the runtime object belongs to (e.g. Accelerate)",
-          "type": "string"
-        },
-        "masterReplicas": {
-          "description": "Runtime master replicas",
-          "type": "integer",
-          "format": "int32"
-        },
-        "name": {
-          "description": "Name of the runtime object",
-          "type": "string"
-        },
-        "namespace": {
-          "description": "Namespace of the runtime object",
-          "type": "string"
-        },
-        "type": {
-          "description": "Runtime object's type (e.g. Alluxio)",
-          "type": "string"
-        }
-      }
-    },
-    ".RuntimeCondition": {
-      "description": "Condition describes the state of the cache at a certain point.",
-      "type": "object",
-      "required": [
-        "type",
-        "status"
-      ],
-      "properties": {
-        "lastProbeTime": {
-          "description": "The last time this condition was updated.",
-          "default": {},
-          "$ref": "#/definitions/v1.Time"
-        },
-        "lastTransitionTime": {
-          "description": "Last time the condition transitioned from one status to another.",
-          "default": {},
-          "$ref": "#/definitions/v1.Time"
-        },
-        "message": {
-          "description": "A human readable message indicating details about the transition.",
-          "type": "string"
-        },
-        "reason": {
-          "description": "The reason for the condition's last transition.",
-          "type": "string"
-        },
-        "status": {
-          "description": "Status of the condition, one of True, False, Unknown.",
-          "type": "string",
-          "default": ""
-        },
-        "type": {
-          "description": "Type of cache condition.",
-          "type": "string",
-          "default": ""
-        }
-      }
-    },
-    ".RuntimeStatus": {
-      "description": "RuntimeStatus defines the observed state of Runtime",
-      "type": "object",
-      "required": [
-        "valueFile",
-        "masterPhase",
-        "workerPhase",
-        "desiredWorkerNumberScheduled",
-        "currentWorkerNumberScheduled",
-        "workerNumberReady",
-        "desiredMasterNumberScheduled",
-        "currentMasterNumberScheduled",
-        "masterNumberReady",
-        "fusePhase",
-        "currentFuseNumberScheduled",
-        "desiredFuseNumberScheduled",
-        "fuseNumberReady"
-      ],
-      "properties": {
-        "apiGateway": {
-          "description": "APIGatewayStatus represents rest api gateway status",
-          "$ref": "#/definitions/.APIGatewayStatus"
-        },
-        "cacheStates": {
-          "description": "CacheStatus represents the total resources of the dataset.",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "conditions": {
-          "description": "Represents the latest available observations of a ddc runtime's current state.",
-          "type": "array",
-          "items": {
-            "default": {},
-            "$ref": "#/definitions/.RuntimeCondition"
+          "enabled": {
+            "description": "Enabled or Disabled for the components. For now, only  API Gateway is enabled or disabled.",
+            "type": "boolean"
           },
-          "x-kubernetes-patch-merge-key": "type",
-          "x-kubernetes-patch-strategy": "merge"
-        },
-        "currentFuseNumberScheduled": {
-          "description": "The total number of nodes that can be running the runtime Fuse pod (including nodes correctly running the runtime Fuse pod).",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        },
-        "currentMasterNumberScheduled": {
-          "description": "The total number of nodes that should be running the runtime pod (including nodes correctly running the runtime master pod).",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        },
-        "currentWorkerNumberScheduled": {
-          "description": "The total number of nodes that can be running the runtime worker pod (including nodes correctly running the runtime worker pod).",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        },
-        "desiredFuseNumberScheduled": {
-          "description": "The total number of nodes that should be running the runtime Fuse pod (including nodes correctly running the runtime Fuse pod).",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        },
-        "desiredMasterNumberScheduled": {
-          "description": "The total number of nodes that should be running the runtime pod (including nodes correctly running the runtime master pod).",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        },
-        "desiredWorkerNumberScheduled": {
-          "description": "The total number of nodes that should be running the runtime worker pod (including nodes correctly running the runtime worker pod).",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        },
-        "fuseNumberAvailable": {
-          "description": "The number of nodes that should be running the runtime Fuse pod and have one or more of the runtime Fuse pod running and available (ready for at least spec.minReadySeconds)",
-          "type": "integer",
-          "format": "int32"
-        },
-        "fuseNumberReady": {
-          "description": "The number of nodes that should be running the runtime Fuse pod and have one or more of the runtime Fuse pod running and ready.",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        },
-        "fuseNumberUnavailable": {
-          "description": "The number of nodes that should be running the runtime fuse pod and have none of the runtime fuse pod running and available (ready for at least spec.minReadySeconds)",
-          "type": "integer",
-          "format": "int32"
-        },
-        "fusePhase": {
-          "description": "FusePhase is the Fuse running phase",
-          "type": "string",
-          "default": ""
-        },
-        "fuseReason": {
-          "description": "Reason for the condition's last transition.",
-          "type": "string"
-        },
-        "masterNumberReady": {
-          "description": "The number of nodes that should be running the runtime worker pod and have zero or more of the runtime master pod running and ready.",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        },
-        "masterPhase": {
-          "description": "MasterPhase is the master running phase",
-          "type": "string",
-          "default": ""
-        },
-        "masterReason": {
-          "description": "Reason for Master's condition transition",
-          "type": "string"
-        },
-        "mountTime": {
-          "description": "MountTime represents time last mount happened if Mounttime is earlier than master starting time, remount will be required",
-          "$ref": "#/definitions/v1.Time"
-        },
-        "selector": {
-          "description": "Selector is used for auto-scaling",
-          "type": "string"
-        },
-        "setupDuration": {
-          "description": "Duration tell user how much time was spent to setup the runtime",
-          "type": "string"
-        },
-        "valueFile": {
-          "description": "config map used to set configurations",
-          "type": "string",
-          "default": ""
-        },
-        "workerNumberAvailable": {
-          "description": "The number of nodes that should be running the runtime worker pod and have one or more of the runtime worker pod running and available (ready for at least spec.minReadySeconds)",
-          "type": "integer",
-          "format": "int32"
-        },
-        "workerNumberReady": {
-          "description": "The number of nodes that should be running the runtime worker pod and have one or more of the runtime worker pod running and ready.",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        },
-        "workerNumberUnavailable": {
-          "description": "The number of nodes that should be running the runtime worker pod and have none of the runtime worker pod running and available (ready for at least spec.minReadySeconds)",
-          "type": "integer",
-          "format": "int32"
-        },
-        "workerPhase": {
-          "description": "WorkerPhase is the worker running phase",
-          "type": "string",
-          "default": ""
-        },
-        "workerReason": {
-          "description": "Reason for Worker's condition transition",
-          "type": "string"
-        }
-      }
-    },
-    ".SecretKeySelector": {
-      "type": "object",
-      "properties": {
-        "key": {
-          "description": "The required key in the secret",
-          "type": "string"
-        },
-        "name": {
-          "description": "The name of required secret",
-          "type": "string"
-        }
-      }
-    },
-    ".TargetDataset": {
-      "description": "TargetDataset defines the target dataset of the DataLoad",
-      "type": "object",
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "name": {
-          "description": "Name defines name of the target dataset",
-          "type": "string",
-          "default": ""
-        },
-        "namespace": {
-          "description": "Namespace defines namespace of the target dataset",
-          "type": "string"
-        }
-      }
-    },
-    ".TargetPath": {
-      "description": "TargetPath defines the target path of the DataLoad",
-      "type": "object",
-      "required": [
-        "path"
-      ],
-      "properties": {
-        "path": {
-          "description": "Path defines path to be load",
-          "type": "string",
-          "default": ""
-        },
-        "replicas": {
-          "description": "Replicas defines how many replicas will be loaded",
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    ".TieredStore": {
-      "description": "TieredStore is a description of the tiered store",
-      "type": "object",
-      "properties": {
-        "levels": {
-          "description": "configurations for multiple tiers",
-          "type": "array",
-          "items": {
+          "env": {
+            "description": "Environment variables that will be used by Alluxio component. \u003cbr\u003e",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "jvmOptions": {
+            "description": "Options for JVM",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "nodeSelector": {
+            "description": "NodeSelector is a selector which must be true for the master to fit on a node",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "ports": {
+            "description": "Ports used by Alluxio(e.g. rpc: 19998 for master)",
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          "properties": {
+            "description": "Configurable properties for the Alluxio component. \u003cbr\u003e Refer to \u003ca href=\"https://docs.alluxio.io/os/user/stable/en/reference/Properties-List.html\"\u003eAlluxio Configuration Properties\u003c/a\u003e for more info",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "replicas": {
+            "description": "Replicas is the desired number of replicas of the given template. If unspecified, defaults to 1. replicas is the min replicas of dataset in the cluster",
+            "type": "integer",
+            "format": "int32"
+          },
+          "resources": {
+            "description": "Resources that will be requested by the Alluxio component. \u003cbr\u003e \u003cbr\u003e Resources are not allowed for ephemeral containers. Ephemeral containers use spare resources already allocated to the pod.",
             "default": {},
-            "$ref": "#/definitions/.Level"
+            "$ref": "#/definitions/v1.ResourceRequirements"
           }
         }
-      }
-    },
-    ".User": {
-      "description": "User explains the user and group to run a Container",
-      "type": "object",
-      "required": [
-        "uid",
-        "gid",
-        "user",
-        "group"
-      ],
-      "properties": {
-        "gid": {
-          "description": "The gid to run the alluxio runtime",
-          "type": "integer",
-          "format": "int64"
-        },
-        "group": {
-          "description": "The group name to run the alluxio runtime",
-          "type": "string",
-          "default": ""
-        },
-        "uid": {
-          "description": "The uid to run the alluxio runtime",
-          "type": "integer",
-          "format": "int64"
-        },
-        "user": {
-          "description": "The user name to run the alluxio runtime",
-          "type": "string",
-          "default": ""
+      },
+      ".AlluxioFuseSpec": {
+        "description": "AlluxioFuseSpec is a description of the Alluxio Fuse",
+        "type": "object",
+        "properties": {
+          "args": {
+            "description": "Arguments that will be passed to Alluxio Fuse",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "cleanPolicy": {
+            "description": "CleanPolicy decides when to clean Alluxio Fuse pods. Currently Fluid supports two policies: OnDemand and OnRuntimeDeleted OnDemand cleans fuse pod once th fuse pod on some node is not needed OnRuntimeDeleted cleans fuse pod only when the cache runtime is deleted Defaults to OnRuntimeDeleted",
+            "type": "string"
+          },
+          "env": {
+            "description": "Environment variables that will be used by Alluxio Fuse",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "global": {
+            "description": "If the fuse client should be deployed in global mode, otherwise the affinity should be considered",
+            "type": "boolean"
+          },
+          "image": {
+            "description": "Image for Alluxio Fuse(e.g. alluxio/alluxio-fuse)",
+            "type": "string"
+          },
+          "imagePullPolicy": {
+            "description": "One of the three policies: `Always`, `IfNotPresent`, `Never`",
+            "type": "string"
+          },
+          "imageTag": {
+            "description": "Image Tag for Alluxio Fuse(e.g. 2.3.0-SNAPSHOT)",
+            "type": "string"
+          },
+          "jvmOptions": {
+            "description": "Options for JVM",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "nodeSelector": {
+            "description": "NodeSelector is a selector which must be true for the fuse client to fit on a node, this option only effect when global is enabled",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "properties": {
+            "description": "Configurable properties for Alluxio System. \u003cbr\u003e Refer to \u003ca href=\"https://docs.alluxio.io/os/user/stable/en/reference/Properties-List.html\"\u003eAlluxio Configuration Properties\u003c/a\u003e for more info",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "resources": {
+            "description": "Resources that will be requested by Alluxio Fuse. \u003cbr\u003e \u003cbr\u003e Resources are not allowed for ephemeral containers. Ephemeral containers use spare resources already allocated to the pod.",
+            "default": {},
+            "$ref": "#/definitions/v1.ResourceRequirements"
+          }
         }
-      }
-    },
-    ".VersionSpec": {
-      "description": "VersionSpec represents the settings for the  version that fluid is orchestrating.",
-      "type": "object",
-      "properties": {
-        "image": {
-          "description": "Image (e.g. alluxio/alluxio)",
-          "type": "string"
-        },
-        "imagePullPolicy": {
-          "description": "One of the three policies: `Always`, `IfNotPresent`, `Never`",
-          "type": "string"
-        },
-        "imageTag": {
-          "description": "Image tag (e.g. 2.3.0-SNAPSHOT)",
-          "type": "string"
+      },
+      ".AlluxioRuntime": {
+        "description": "AlluxioRuntime is the Schema for the alluxioruntimes API",
+        "type": "object",
+        "properties": {
+          "apiVersion": {
+            "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+            "type": "string"
+          },
+          "kind": {
+            "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+            "type": "string"
+          },
+          "metadata": {
+            "default": {},
+            "$ref": "#/definitions/v1.ObjectMeta"
+          },
+          "spec": {
+            "default": {},
+            "$ref": "#/definitions/.AlluxioRuntimeSpec"
+          },
+          "status": {
+            "default": {},
+            "$ref": "#/definitions/.RuntimeStatus"
+          }
+        }
+      },
+      ".AlluxioRuntimeList": {
+        "description": "AlluxioRuntimeList contains a list of AlluxioRuntime",
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "apiVersion": {
+            "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/.AlluxioRuntime"
+            }
+          },
+          "kind": {
+            "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+            "type": "string"
+          },
+          "metadata": {
+            "default": {},
+            "$ref": "#/definitions/v1.ListMeta"
+          }
+        }
+      },
+      ".AlluxioRuntimeSpec": {
+        "description": "AlluxioRuntimeSpec defines the desired state of AlluxioRuntime",
+        "type": "object",
+        "properties": {
+          "alluxioVersion": {
+            "description": "The version information that instructs fluid to orchestrate a particular version of Alluxio.",
+            "default": {},
+            "$ref": "#/definitions/.VersionSpec"
+          },
+          "apiGateway": {
+            "description": "The component spec of Alluxio API Gateway",
+            "default": {},
+            "$ref": "#/definitions/.AlluxioCompTemplateSpec"
+          },
+          "data": {
+            "description": "Management strategies for the dataset to which the runtime is bound",
+            "default": {},
+            "$ref": "#/definitions/.Data"
+          },
+          "disablePrometheus": {
+            "description": "Disable monitoring for Alluxio Runtime Prometheus is enabled by default",
+            "type": "boolean"
+          },
+          "fuse": {
+            "description": "The component spec of Alluxio Fuse",
+            "default": {},
+            "$ref": "#/definitions/.AlluxioFuseSpec"
+          },
+          "hadoopConfig": {
+            "description": "Name of the configMap used to support HDFS configurations when using HDFS as Alluxio's UFS. The configMap must be in the same namespace with the AlluxioRuntime. The configMap should contain user-specific HDFS conf files in it. For now, only \"hdfs-site.xml\" and \"core-site.xml\" are supported. It must take the filename of the conf file as the key and content of the file as the value.",
+            "type": "string"
+          },
+          "initUsers": {
+            "description": "The spec of init users",
+            "default": {},
+            "$ref": "#/definitions/.InitUsersSpec"
+          },
+          "jobMaster": {
+            "description": "The component spec of Alluxio job master",
+            "default": {},
+            "$ref": "#/definitions/.AlluxioCompTemplateSpec"
+          },
+          "jobWorker": {
+            "description": "The component spec of Alluxio job Worker",
+            "default": {},
+            "$ref": "#/definitions/.AlluxioCompTemplateSpec"
+          },
+          "jvmOptions": {
+            "description": "Options for JVM",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "master": {
+            "description": "The component spec of Alluxio master",
+            "default": {},
+            "$ref": "#/definitions/.AlluxioCompTemplateSpec"
+          },
+          "properties": {
+            "description": "Configurable properties for Alluxio system. \u003cbr\u003e Refer to \u003ca href=\"https://docs.alluxio.io/os/user/stable/en/reference/Properties-List.html\"\u003eAlluxio Configuration Properties\u003c/a\u003e for more info",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "replicas": {
+            "description": "The replicas of the worker, need to be specified",
+            "type": "integer",
+            "format": "int32"
+          },
+          "runAs": {
+            "description": "Manage the user to run Alluxio Runtime",
+            "$ref": "#/definitions/.User"
+          },
+          "tieredstore": {
+            "description": "Tiered storage used by Alluxio",
+            "default": {},
+            "$ref": "#/definitions/.TieredStore"
+          },
+          "worker": {
+            "description": "The component spec of Alluxio worker",
+            "default": {},
+            "$ref": "#/definitions/.AlluxioCompTemplateSpec"
+          }
+        }
+      },
+      ".BackupLocation": {
+        "description": "BackupLocation describes the final backup location of DataBackup",
+        "type": "object",
+        "properties": {
+          "nodeName": {
+            "description": "NodeName describes the nodeName of backup if Path is in the form of local://subpath",
+            "type": "string"
+          },
+          "path": {
+            "description": "Path describes the path of backup, in the form of local:///absolutePath or pvc://\u003cpvcName\u003e/subpath",
+            "type": "string"
+          }
+        }
+      },
+      ".CacheableNodeAffinity": {
+        "description": "CacheableNodeAffinity defines constraints that limit what nodes this dataset can be cached to.",
+        "type": "object",
+        "properties": {
+          "required": {
+            "description": "Required specifies hard node constraints that must be met.",
+            "$ref": "#/definitions/v1.NodeSelector"
+          }
+        }
+      },
+      ".Condition": {
+        "description": "Condition explains the transitions on phase",
+        "type": "object",
+        "required": [
+          "type",
+          "status"
+        ],
+        "properties": {
+          "lastProbeTime": {
+            "description": "LastProbeTime describes last time this condition was updated.",
+            "default": {},
+            "$ref": "#/definitions/v1.Time"
+          },
+          "lastTransitionTime": {
+            "description": "LastTransitionTime describes last time the condition transitioned from one status to another.",
+            "default": {},
+            "$ref": "#/definitions/v1.Time"
+          },
+          "message": {
+            "description": "Message is a human-readable message indicating details about the transition",
+            "type": "string"
+          },
+          "reason": {
+            "description": "Reason for the condition's last transition",
+            "type": "string"
+          },
+          "status": {
+            "description": "Status of the condition, one of `True`, `False` or `Unknown`",
+            "type": "string",
+            "default": ""
+          },
+          "type": {
+            "description": "Type of condition, either `Complete` or `Failed`",
+            "type": "string",
+            "default": ""
+          }
+        }
+      },
+      ".Data": {
+        "description": "Data management strategies",
+        "type": "object",
+        "properties": {
+          "pin": {
+            "description": "Pin the dataset or not. Refer to \u003ca href=\"https://docs.alluxio.io/os/user/stable/en/operation/User-CLI.html#pin\"\u003eAlluxio User-CLI pin\u003c/a\u003e",
+            "type": "boolean",
+            "default": false
+          },
+          "replicas": {
+            "description": "The copies of the dataset",
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          }
+        }
+      },
+      ".DataBackup": {
+        "description": "DataBackup is the Schema for the backup API",
+        "type": "object",
+        "properties": {
+          "apiVersion": {
+            "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+            "type": "string"
+          },
+          "kind": {
+            "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+            "type": "string"
+          },
+          "metadata": {
+            "default": {},
+            "$ref": "#/definitions/v1.ObjectMeta"
+          },
+          "spec": {
+            "default": {},
+            "$ref": "#/definitions/.DataBackupSpec"
+          },
+          "status": {
+            "default": {},
+            "$ref": "#/definitions/.DataBackupStatus"
+          }
+        }
+      },
+      ".DataBackupList": {
+        "description": "DataBackupList contains a list of DataBackup",
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "apiVersion": {
+            "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/.DataBackup"
+            }
+          },
+          "kind": {
+            "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+            "type": "string"
+          },
+          "metadata": {
+            "default": {},
+            "$ref": "#/definitions/v1.ListMeta"
+          }
+        }
+      },
+      ".DataBackupSpec": {
+        "description": "DataBackupSpec defines the desired state of DataBackup",
+        "type": "object",
+        "properties": {
+          "backupPath": {
+            "description": "BackupPath defines the target path to save data of the DataBackup",
+            "type": "string"
+          },
+          "dataset": {
+            "description": "Dataset defines the target dataset of the DataBackup",
+            "type": "string"
+          },
+          "runAs": {
+            "description": "Manage the user to run Alluxio DataBackup",
+            "$ref": "#/definitions/.User"
+          }
+        }
+      },
+      ".DataBackupStatus": {
+        "description": "DataBackupStatus defines the observed state of DataBackup",
+        "type": "object",
+        "required": [
+          "phase",
+          "duration",
+          "conditions"
+        ],
+        "properties": {
+          "backupLocation": {
+            "description": "BackupLocation tell user the location to save data of the DataBackup",
+            "default": {},
+            "$ref": "#/definitions/.BackupLocation"
+          },
+          "conditions": {
+            "description": "Conditions consists of transition information on DataBackup's Phase",
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/.Condition"
+            }
+          },
+          "duration": {
+            "description": "Duration tell user how much time was spent to backup",
+            "type": "string",
+            "default": ""
+          },
+          "phase": {
+            "description": "Phase describes current phase of DataBackup",
+            "type": "string",
+            "default": ""
+          }
+        }
+      },
+      ".DataLoad": {
+        "description": "DataLoad is the Schema for the dataloads API",
+        "type": "object",
+        "properties": {
+          "apiVersion": {
+            "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+            "type": "string"
+          },
+          "kind": {
+            "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+            "type": "string"
+          },
+          "metadata": {
+            "default": {},
+            "$ref": "#/definitions/v1.ObjectMeta"
+          },
+          "spec": {
+            "default": {},
+            "$ref": "#/definitions/.DataLoadSpec"
+          },
+          "status": {
+            "default": {},
+            "$ref": "#/definitions/.DataLoadStatus"
+          }
+        }
+      },
+      ".DataLoadList": {
+        "description": "DataLoadList contains a list of DataLoad",
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "apiVersion": {
+            "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/.DataLoad"
+            }
+          },
+          "kind": {
+            "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+            "type": "string"
+          },
+          "metadata": {
+            "default": {},
+            "$ref": "#/definitions/v1.ListMeta"
+          }
+        }
+      },
+      ".DataLoadSpec": {
+        "description": "DataLoadSpec defines the desired state of DataLoad",
+        "type": "object",
+        "properties": {
+          "dataset": {
+            "description": "Dataset defines the target dataset of the DataLoad",
+            "default": {},
+            "$ref": "#/definitions/.TargetDataset"
+          },
+          "loadMetadata": {
+            "description": "LoadMetadata specifies if the dataload job should load metadata",
+            "type": "boolean"
+          },
+          "options": {
+            "description": "Options specifies the extra dataload properties for runtime",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "target": {
+            "description": "Target defines target paths that needs to be loaded",
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/.TargetPath"
+            }
+          }
+        }
+      },
+      ".DataLoadStatus": {
+        "description": "DataLoadStatus defines the observed state of DataLoad",
+        "type": "object",
+        "required": [
+          "phase",
+          "conditions",
+          "duration"
+        ],
+        "properties": {
+          "conditions": {
+            "description": "Conditions consists of transition information on DataLoad's Phase",
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/.Condition"
+            }
+          },
+          "duration": {
+            "description": "Duration tell user how much time was spent to load the data",
+            "type": "string",
+            "default": ""
+          },
+          "phase": {
+            "description": "Phase describes current phase of DataLoad",
+            "type": "string",
+            "default": ""
+          }
+        }
+      },
+      ".DataRestoreLocation": {
+        "description": "DataRestoreLocation describes the spec restore location of  Dataset",
+        "type": "object",
+        "properties": {
+          "nodeName": {
+            "description": "NodeName describes the nodeName of restore if Path is  in the form of local://subpath",
+            "type": "string"
+          },
+          "path": {
+            "description": "Path describes the path of restore, in the form of  local://subpath or pvc://\u003cpvcName\u003e/subpath",
+            "type": "string"
+          }
+        }
+      },
+      ".Dataset": {
+        "description": "Dataset is the Schema for the datasets API",
+        "type": "object",
+        "properties": {
+          "apiVersion": {
+            "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+            "type": "string"
+          },
+          "kind": {
+            "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+            "type": "string"
+          },
+          "metadata": {
+            "default": {},
+            "$ref": "#/definitions/v1.ObjectMeta"
+          },
+          "spec": {
+            "default": {},
+            "$ref": "#/definitions/.DatasetSpec"
+          },
+          "status": {
+            "default": {},
+            "$ref": "#/definitions/.DatasetStatus"
+          }
+        }
+      },
+      ".DatasetCondition": {
+        "description": "Condition describes the state of the cache at a certain point.",
+        "type": "object",
+        "required": [
+          "type",
+          "status"
+        ],
+        "properties": {
+          "lastTransitionTime": {
+            "description": "Last time the condition transitioned from one status to another.",
+            "default": {},
+            "$ref": "#/definitions/v1.Time"
+          },
+          "lastUpdateTime": {
+            "description": "The last time this condition was updated.",
+            "default": {},
+            "$ref": "#/definitions/v1.Time"
+          },
+          "message": {
+            "description": "A human readable message indicating details about the transition.",
+            "type": "string"
+          },
+          "reason": {
+            "description": "The reason for the condition's last transition.",
+            "type": "string"
+          },
+          "status": {
+            "description": "Status of the condition, one of True, False, Unknown.",
+            "type": "string",
+            "default": ""
+          },
+          "type": {
+            "description": "Type of cache condition.",
+            "type": "string",
+            "default": ""
+          }
+        }
+      },
+      ".DatasetList": {
+        "description": "DatasetList contains a list of Dataset",
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "apiVersion": {
+            "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/.Dataset"
+            }
+          },
+          "kind": {
+            "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+            "type": "string"
+          },
+          "metadata": {
+            "default": {},
+            "$ref": "#/definitions/v1.ListMeta"
+          }
+        }
+      },
+      ".DatasetSpec": {
+        "description": "DatasetSpec defines the desired state of Dataset",
+        "type": "object",
+        "properties": {
+          "accessModes": {
+            "description": "AccessModes contains all ways the volume backing the PVC can be mounted",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "dataRestoreLocation": {
+            "description": "DataRestoreLocation is the location to load data of dataset  been backuped",
+            "$ref": "#/definitions/.DataRestoreLocation"
+          },
+          "mounts": {
+            "description": "Mount Points to be mounted on Alluxio.",
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/.Mount"
+            }
+          },
+          "nodeAffinity": {
+            "description": "NodeAffinity defines constraints that limit what nodes this dataset can be cached to. This field influences the scheduling of pods that use the cached dataset.",
+            "$ref": "#/definitions/.CacheableNodeAffinity"
+          },
+          "owner": {
+            "description": "The owner of the dataset",
+            "$ref": "#/definitions/.User"
+          },
+          "placement": {
+            "description": "Manage switch for opening Multiple datasets single node deployment or not",
+            "type": "string"
+          },
+          "runtimes": {
+            "description": "Runtimes for supporting dataset (e.g. AlluxioRuntime)",
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/.Runtime"
+            }
+          },
+          "tolerations": {
+            "description": "If specified, the pod's tolerations.",
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/v1.Toleration"
+            }
+          }
+        }
+      },
+      ".DatasetStatus": {
+        "description": "DatasetStatus defines the observed state of Dataset",
+        "type": "object",
+        "required": [
+          "conditions"
+        ],
+        "properties": {
+          "cacheStates": {
+            "description": "CacheStatus represents the total resources of the dataset.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "conditions": {
+            "description": "Conditions is an array of current observed conditions.",
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/.DatasetCondition"
+            }
+          },
+          "dataBackupRef": {
+            "description": "DataBackupRef specifies the running Backup job that targets this Dataset. This is mainly used as a lock to prevent concurrent DataBackup jobs.",
+            "type": "string"
+          },
+          "dataLoadRef": {
+            "description": "DataLoadRef specifies the running DataLoad job that targets this Dataset. This is mainly used as a lock to prevent concurrent DataLoad jobs.",
+            "type": "string"
+          },
+          "fileNum": {
+            "description": "FileNum represents the file numbers of the dataset",
+            "type": "string"
+          },
+          "hcfs": {
+            "description": "HCFSStatus represents hcfs info",
+            "$ref": "#/definitions/.HCFSStatus"
+          },
+          "mounts": {
+            "description": "the info of mount points have been mounted",
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/.Mount"
+            }
+          },
+          "phase": {
+            "description": "Dataset Phase. One of the four phases: `Pending`, `Bound`, `NotBound` and `Failed`",
+            "type": "string"
+          },
+          "runtimes": {
+            "description": "Runtimes for supporting dataset",
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/.Runtime"
+            }
+          },
+          "ufsTotal": {
+            "description": "Total in GB of dataset in the cluster",
+            "type": "string"
+          }
+        }
+      },
+      ".EncryptOption": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The name of encryptOption",
+            "type": "string"
+          },
+          "valueFrom": {
+            "description": "The valueFrom of encryptOption",
+            "default": {},
+            "$ref": "#/definitions/.EncryptOptionSource"
+          }
+        }
+      },
+      ".EncryptOptionSource": {
+        "type": "object",
+        "properties": {
+          "secretKeyRef": {
+            "description": "The encryptInfo obtained from secret",
+            "default": {},
+            "$ref": "#/definitions/.SecretKeySelector"
+          }
+        }
+      },
+      ".GooseFSCompTemplateSpec": {
+        "description": "GooseFSCompTemplateSpec is a description of the GooseFS commponents",
+        "type": "object",
+        "properties": {
+          "annotations": {
+            "description": "Annotations is an unstructured key value map stored with a resource that may be set by external tools to store and retrieve arbitrary metadata. They are not queryable and should be preserved when modifying objects. More info: http://kubernetes.io/docs/user-guide/annotations",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "enabled": {
+            "description": "Enabled or Disabled for the components. For now, only  API Gateway is enabled or disabled.",
+            "type": "boolean"
+          },
+          "env": {
+            "description": "Environment variables that will be used by GooseFS component. \u003cbr\u003e",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "jvmOptions": {
+            "description": "Options for JVM",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "nodeSelector": {
+            "description": "NodeSelector is a selector which must be true for the master to fit on a node",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "ports": {
+            "description": "Ports used by GooseFS(e.g. rpc: 19998 for master)",
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          "properties": {
+            "description": "Configurable properties for the GOOSEFS component. \u003cbr\u003e Refer to \u003ca href=\"https://cloud.tencent.com/document/product/436/56415\"\u003eGOOSEFS Configuration Properties\u003c/a\u003e for more info",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "replicas": {
+            "description": "Replicas is the desired number of replicas of the given template. If unspecified, defaults to 1. replicas is the min replicas of dataset in the cluster",
+            "type": "integer",
+            "format": "int32"
+          },
+          "resources": {
+            "description": "Resources that will be requested by the GooseFS component. \u003cbr\u003e \u003cbr\u003e Resources are not allowed for ephemeral containers. Ephemeral containers use spare resources already allocated to the pod.",
+            "default": {},
+            "$ref": "#/definitions/v1.ResourceRequirements"
+          }
+        }
+      },
+      ".GooseFSFuseSpec": {
+        "description": "GooseFSFuseSpec is a description of the GooseFS Fuse",
+        "type": "object",
+        "properties": {
+          "annotations": {
+            "description": "Annotations is an unstructured key value map stored with a resource that may be set by external tools to store and retrieve arbitrary metadata. They are not queryable and should be preserved when modifying objects. More info: http://kubernetes.io/docs/user-guide/annotations",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "args": {
+            "description": "Arguments that will be passed to GooseFS Fuse",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "cleanPolicy": {
+            "description": "CleanPolicy decides when to clean GooseFS Fuse pods. Currently Fluid supports two policies: OnDemand and OnRuntimeDeleted OnDemand cleans fuse pod once th fuse pod on some node is not needed OnRuntimeDeleted cleans fuse pod only when the cache runtime is deleted Defaults to OnRuntimeDeleted",
+            "type": "string"
+          },
+          "env": {
+            "description": "Environment variables that will be used by GooseFS Fuse",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "global": {
+            "description": "If the fuse client should be deployed in global mode, otherwise the affinity should be considered",
+            "type": "boolean"
+          },
+          "image": {
+            "description": "Image for GooseFS Fuse(e.g. goosefs/goosefs-fuse)",
+            "type": "string"
+          },
+          "imagePullPolicy": {
+            "description": "One of the three policies: `Always`, `IfNotPresent`, `Never`",
+            "type": "string"
+          },
+          "imageTag": {
+            "description": "Image Tag for GooseFS Fuse(e.g. v1.0.1)",
+            "type": "string"
+          },
+          "jvmOptions": {
+            "description": "Options for JVM",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "nodeSelector": {
+            "description": "NodeSelector is a selector which must be true for the fuse client to fit on a node, this option only effect when global is enabled",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "properties": {
+            "description": "Configurable properties for the GOOSEFS component. \u003cbr\u003e Refer to \u003ca href=\"https://cloud.tencent.com/document/product/436/56415\"\u003eGOOSEFS Configuration Properties\u003c/a\u003e for more info",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "resources": {
+            "description": "Resources that will be requested by GooseFS Fuse. \u003cbr\u003e \u003cbr\u003e Resources are not allowed for ephemeral containers. Ephemeral containers use spare resources already allocated to the pod.",
+            "default": {},
+            "$ref": "#/definitions/v1.ResourceRequirements"
+          }
+        }
+      },
+      ".GooseFSRuntime": {
+        "description": "GooseFSRuntime is the Schema for the goosefsruntimes API",
+        "type": "object",
+        "properties": {
+          "apiVersion": {
+            "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+            "type": "string"
+          },
+          "kind": {
+            "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+            "type": "string"
+          },
+          "metadata": {
+            "default": {},
+            "$ref": "#/definitions/v1.ObjectMeta"
+          },
+          "spec": {
+            "default": {},
+            "$ref": "#/definitions/.GooseFSRuntimeSpec"
+          },
+          "status": {
+            "default": {},
+            "$ref": "#/definitions/.RuntimeStatus"
+          }
+        }
+      },
+      ".GooseFSRuntimeList": {
+        "description": "GooseFSRuntimeList contains a list of GooseFSRuntime",
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "apiVersion": {
+            "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/.GooseFSRuntime"
+            }
+          },
+          "kind": {
+            "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+            "type": "string"
+          },
+          "metadata": {
+            "default": {},
+            "$ref": "#/definitions/v1.ListMeta"
+          }
+        }
+      },
+      ".GooseFSRuntimeSpec": {
+        "description": "GooseFSRuntimeSpec defines the desired state of GooseFSRuntime",
+        "type": "object",
+        "properties": {
+          "apiGateway": {
+            "description": "The component spec of GooseFS API Gateway",
+            "default": {},
+            "$ref": "#/definitions/.GooseFSCompTemplateSpec"
+          },
+          "data": {
+            "description": "Management strategies for the dataset to which the runtime is bound",
+            "default": {},
+            "$ref": "#/definitions/.Data"
+          },
+          "disablePrometheus": {
+            "description": "Disable monitoring for GooseFS Runtime Prometheus is enabled by default",
+            "type": "boolean"
+          },
+          "fuse": {
+            "description": "The component spec of GooseFS Fuse",
+            "default": {},
+            "$ref": "#/definitions/.GooseFSFuseSpec"
+          },
+          "goosefsVersion": {
+            "description": "The version information that instructs fluid to orchestrate a particular version of GooseFS.",
+            "default": {},
+            "$ref": "#/definitions/.VersionSpec"
+          },
+          "hadoopConfig": {
+            "description": "Name of the configMap used to support HDFS configurations when using HDFS as GooseFS's UFS. The configMap must be in the same namespace with the GooseFSRuntime. The configMap should contain user-specific HDFS conf files in it. For now, only \"hdfs-site.xml\" and \"core-site.xml\" are supported. It must take the filename of the conf file as the key and content of the file as the value.",
+            "type": "string"
+          },
+          "initUsers": {
+            "description": "The spec of init users",
+            "default": {},
+            "$ref": "#/definitions/.InitUsersSpec"
+          },
+          "jobMaster": {
+            "description": "The component spec of GooseFS job master",
+            "default": {},
+            "$ref": "#/definitions/.GooseFSCompTemplateSpec"
+          },
+          "jobWorker": {
+            "description": "The component spec of GooseFS job Worker",
+            "default": {},
+            "$ref": "#/definitions/.GooseFSCompTemplateSpec"
+          },
+          "jvmOptions": {
+            "description": "Options for JVM",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "master": {
+            "description": "The component spec of GooseFS master",
+            "default": {},
+            "$ref": "#/definitions/.GooseFSCompTemplateSpec"
+          },
+          "properties": {
+            "description": "Configurable properties for the GOOSEFS component. \u003cbr\u003e Refer to \u003ca href=\"https://cloud.tencent.com/document/product/436/56415\"\u003eGOOSEFS Configuration Properties\u003c/a\u003e for more info",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "replicas": {
+            "description": "The replicas of the worker, need to be specified",
+            "type": "integer",
+            "format": "int32"
+          },
+          "runAs": {
+            "description": "Manage the user to run GooseFS Runtime GooseFS support POSIX-ACL and Apache Ranger to manager authorization",
+            "$ref": "#/definitions/.User"
+          },
+          "tieredstore": {
+            "description": "Tiered storage used by GooseFS",
+            "default": {},
+            "$ref": "#/definitions/.TieredStore"
+          },
+          "worker": {
+            "description": "The component spec of GooseFS worker",
+            "default": {},
+            "$ref": "#/definitions/.GooseFSCompTemplateSpec"
+          }
+        }
+      },
+      ".HCFSStatus": {
+        "description": "HCFS Endpoint info",
+        "type": "object",
+        "properties": {
+          "endpoint": {
+            "description": "Endpoint for accessing",
+            "type": "string"
+          },
+          "underlayerFileSystemVersion": {
+            "description": "Underlayer HCFS Compatible Version",
+            "type": "string"
+          }
+        }
+      },
+      ".InitUsersSpec": {
+        "description": "InitUsersSpec is a description of the initialize the users for runtime",
+        "type": "object",
+        "properties": {
+          "env": {
+            "description": "Environment variables that will be used by initialize the users for runtime",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "image": {
+            "description": "Image for initialize the users for runtime(e.g. alluxio/alluxio-User init)",
+            "type": "string"
+          },
+          "imagePullPolicy": {
+            "description": "One of the three policies: `Always`, `IfNotPresent`, `Never`",
+            "type": "string"
+          },
+          "imageTag": {
+            "description": "Image Tag for initialize the users for runtime(e.g. 2.3.0-SNAPSHOT)",
+            "type": "string"
+          },
+          "resources": {
+            "description": "Resources that will be requested by initialize the users for runtime. \u003cbr\u003e \u003cbr\u003e Resources are not allowed for ephemeral containers. Ephemeral containers use spare resources already allocated to the pod.",
+            "default": {},
+            "$ref": "#/definitions/v1.ResourceRequirements"
+          }
+        }
+      },
+      ".JindoCompTemplateSpec": {
+        "description": "JindoCompTemplateSpec is a description of the Jindo commponents",
+        "type": "object",
+        "properties": {
+          "env": {
+            "description": "Environment variables that will be used by Jindo component. \u003cbr\u003e",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "labels": {
+            "description": "Labels will be added on all the JindoFS Master or Worker pods. Any label already existed will be overriden",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "nodeSelector": {
+            "description": "NodeSelector is a selector which must be true for the master to fit on a node",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "ports": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          "properties": {
+            "description": "Configurable properties for the Jindo component. \u003cbr\u003e",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "replicas": {
+            "description": "Replicas is the desired number of replicas of the given template. If unspecified, defaults to 1. replicas is the min replicas of dataset in the cluster",
+            "type": "integer",
+            "format": "int32"
+          },
+          "resources": {
+            "description": "Resources that will be requested by the Jindo component. \u003cbr\u003e \u003cbr\u003e Resources are not allowed for ephemeral containers. Ephemeral containers use spare resources already allocated to the pod.",
+            "default": {},
+            "$ref": "#/definitions/v1.ResourceRequirements"
+          },
+          "tolerations": {
+            "description": "If specified, the pod's tolerations.",
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/v1.Toleration"
+            }
+          }
+        }
+      },
+      ".JindoFuseSpec": {
+        "description": "JindoFuseSpec is a description of the Jindo Fuse",
+        "type": "object",
+        "properties": {
+          "args": {
+            "description": "Arguments that will be passed to Jindo Fuse",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "cleanPolicy": {
+            "description": "CleanPolicy decides when to clean JindoFS Fuse pods. Currently Fluid supports two policies: OnDemand and OnRuntimeDeleted OnDemand cleans fuse pod once th fuse pod on some node is not needed OnRuntimeDeleted cleans fuse pod only when the cache runtime is deleted Defaults to OnRuntimeDeleted",
+            "type": "string"
+          },
+          "env": {
+            "description": "Environment variables that will be used by Jindo Fuse",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "global": {
+            "description": "If the fuse client should be deployed in global mode, otherwise the affinity should be considered",
+            "type": "boolean"
+          },
+          "image": {
+            "description": "Image for Jindo Fuse(e.g. jindo/jindo-fuse)",
+            "type": "string"
+          },
+          "imagePullPolicy": {
+            "description": "One of the three policies: `Always`, `IfNotPresent`, `Never`",
+            "type": "string"
+          },
+          "imageTag": {
+            "description": "Image Tag for Jindo Fuse(e.g. 2.3.0-SNAPSHOT)",
+            "type": "string"
+          },
+          "labels": {
+            "description": "Labels will be added on all the JindoFS Fuse pods. Any label already existed will be overriden",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "nodeSelector": {
+            "description": "NodeSelector is a selector which must be true for the fuse client to fit on a node, this option only effect when global is enabled",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "properties": {
+            "description": "Configurable properties for Jindo System. \u003cbr\u003e",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "resources": {
+            "description": "Resources that will be requested by Jindo Fuse. \u003cbr\u003e \u003cbr\u003e Resources are not allowed for ephemeral containers. Ephemeral containers use spare resources already allocated to the pod.",
+            "default": {},
+            "$ref": "#/definitions/v1.ResourceRequirements"
+          },
+          "tolerations": {
+            "description": "If specified, the pod's tolerations.",
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/v1.Toleration"
+            }
+          }
+        }
+      },
+      ".JindoRuntime": {
+        "description": "JindoRuntime is the Schema for the jindoruntimes API",
+        "type": "object",
+        "properties": {
+          "apiVersion": {
+            "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+            "type": "string"
+          },
+          "kind": {
+            "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+            "type": "string"
+          },
+          "metadata": {
+            "default": {},
+            "$ref": "#/definitions/v1.ObjectMeta"
+          },
+          "spec": {
+            "default": {},
+            "$ref": "#/definitions/.JindoRuntimeSpec"
+          },
+          "status": {
+            "default": {},
+            "$ref": "#/definitions/.RuntimeStatus"
+          }
+        }
+      },
+      ".JindoRuntimeList": {
+        "description": "JindoRuntimeList contains a list of JindoRuntime",
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "apiVersion": {
+            "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/.JindoRuntime"
+            }
+          },
+          "kind": {
+            "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+            "type": "string"
+          },
+          "metadata": {
+            "default": {},
+            "$ref": "#/definitions/v1.ListMeta"
+          }
+        }
+      },
+      ".JindoRuntimeSpec": {
+        "description": "JindoRuntimeSpec defines the desired state of JindoRuntime",
+        "type": "object",
+        "properties": {
+          "fuse": {
+            "description": "The component spec of Jindo Fuse",
+            "default": {},
+            "$ref": "#/definitions/.JindoFuseSpec"
+          },
+          "hadoopConfig": {
+            "description": "Name of the configMap used to support HDFS configurations when using HDFS as Jindo's UFS. The configMap must be in the same namespace with the JindoRuntime. The configMap should contain user-specific HDFS conf files in it. For now, only \"hdfs-site.xml\" and \"core-site.xml\" are supported. It must take the filename of the conf file as the key and content of the file as the value.",
+            "type": "string"
+          },
+          "jindoVersion": {
+            "description": "The version information that instructs fluid to orchestrate a particular version of Jindo.",
+            "default": {},
+            "$ref": "#/definitions/.VersionSpec"
+          },
+          "labels": {
+            "description": "Labels will be added on all the JindoFS pods.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "logConfig": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "master": {
+            "description": "The component spec of Jindo master",
+            "default": {},
+            "$ref": "#/definitions/.JindoCompTemplateSpec"
+          },
+          "networkmode": {
+            "description": "Whether to use hostnetwork or not",
+            "type": "string"
+          },
+          "properties": {
+            "description": "Configurable properties for Jindo system. \u003cbr\u003e",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "replicas": {
+            "description": "The replicas of the worker, need to be specified",
+            "type": "integer",
+            "format": "int32"
+          },
+          "runAs": {
+            "description": "Manage the user to run Jindo Runtime",
+            "$ref": "#/definitions/.User"
+          },
+          "secret": {
+            "type": "string"
+          },
+          "tieredstore": {
+            "description": "Tiered storage used by Jindo",
+            "default": {},
+            "$ref": "#/definitions/.TieredStore"
+          },
+          "user": {
+            "type": "string"
+          },
+          "worker": {
+            "description": "The component spec of Jindo worker",
+            "default": {},
+            "$ref": "#/definitions/.JindoCompTemplateSpec"
+          }
+        }
+      },
+      ".JuiceFSCompTemplateSpec": {
+        "description": "JuiceFSCompTemplateSpec is a description of the JuiceFS components",
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "description": "Enabled or Disabled for the components.",
+            "type": "boolean"
+          },
+          "env": {
+            "description": "Environment variables that will be used by JuiceFS component.",
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/v1.EnvVar"
+            }
+          },
+          "nodeSelector": {
+            "description": "NodeSelector is a selector",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "ports": {
+            "description": "Ports used by JuiceFS",
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/v1.ContainerPort"
+            }
+          },
+          "replicas": {
+            "description": "Replicas is the desired number of replicas of the given template. If unspecified, defaults to 1. replicas is the min replicas of dataset in the cluster",
+            "type": "integer",
+            "format": "int32"
+          },
+          "resources": {
+            "description": "Resources that will be requested by the JuiceFS component.",
+            "default": {},
+            "$ref": "#/definitions/v1.ResourceRequirements"
+          }
+        }
+      },
+      ".JuiceFSFuseSpec": {
+        "type": "object",
+        "properties": {
+          "cleanPolicy": {
+            "description": "CleanPolicy decides when to clean Juicefs Fuse pods. Currently Fluid supports two policies: OnDemand and OnRuntimeDeleted OnDemand cleans fuse pod once th fuse pod on some node is not needed OnRuntimeDeleted cleans fuse pod only when the cache runtime is deleted Defaults to OnDemand",
+            "type": "string"
+          },
+          "env": {
+            "description": "Environment variables that will be used by JuiceFS Fuse",
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/v1.EnvVar"
+            }
+          },
+          "global": {
+            "description": "If the fuse client should be deployed in global mode, otherwise the affinity should be considered",
+            "type": "boolean"
+          },
+          "image": {
+            "description": "Image for JuiceFS fuse",
+            "type": "string"
+          },
+          "imagePullPolicy": {
+            "description": "One of the three policies: `Always`, `IfNotPresent`, `Never`",
+            "type": "string"
+          },
+          "imageTag": {
+            "description": "Image for JuiceFS fuse",
+            "type": "string"
+          },
+          "nodeSelector": {
+            "description": "NodeSelector is a selector which must be true for the fuse client to fit on a node, this option only effect when global is enabled",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "resources": {
+            "description": "Resources that will be requested by JuiceFS Fuse.",
+            "default": {},
+            "$ref": "#/definitions/v1.ResourceRequirements"
+          }
+        }
+      },
+      ".JuiceFSRuntime": {
+        "description": "JuiceFSRuntime is the Schema for the juicefsruntimes API",
+        "type": "object",
+        "properties": {
+          "apiVersion": {
+            "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+            "type": "string"
+          },
+          "kind": {
+            "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+            "type": "string"
+          },
+          "metadata": {
+            "default": {},
+            "$ref": "#/definitions/v1.ObjectMeta"
+          },
+          "spec": {
+            "default": {},
+            "$ref": "#/definitions/.JuiceFSRuntimeSpec"
+          },
+          "status": {
+            "default": {},
+            "$ref": "#/definitions/.RuntimeStatus"
+          }
+        }
+      },
+      ".JuiceFSRuntimeList": {
+        "description": "JuiceFSRuntimeList contains a list of JuiceFSRuntime",
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "apiVersion": {
+            "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/.JuiceFSRuntime"
+            }
+          },
+          "kind": {
+            "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+            "type": "string"
+          },
+          "metadata": {
+            "default": {},
+            "$ref": "#/definitions/v1.ListMeta"
+          }
+        }
+      },
+      ".JuiceFSRuntimeSpec": {
+        "description": "JuiceFSRuntimeSpec defines the desired state of JuiceFSRuntime",
+        "type": "object",
+        "properties": {
+          "disablePrometheus": {
+            "description": "Disable monitoring for JuiceFS Runtime Prometheus is enabled by default",
+            "type": "boolean"
+          },
+          "fuse": {
+            "description": "Desired state for JuiceFS Fuse",
+            "default": {},
+            "$ref": "#/definitions/.JuiceFSFuseSpec"
+          },
+          "initUsers": {
+            "description": "The spec of init users",
+            "default": {},
+            "$ref": "#/definitions/.InitUsersSpec"
+          },
+          "jobWorker": {
+            "description": "The component spec of JuiceFS job Worker",
+            "default": {},
+            "$ref": "#/definitions/.JuiceFSCompTemplateSpec"
+          },
+          "juicefsVersion": {
+            "description": "The version information that instructs fluid to orchestrate a particular version of JuiceFS.",
+            "default": {},
+            "$ref": "#/definitions/.VersionSpec"
+          },
+          "master": {
+            "description": "The component spec of JuiceFS master",
+            "default": {},
+            "$ref": "#/definitions/.JuiceFSCompTemplateSpec"
+          },
+          "replicas": {
+            "description": "The replicas of the worker, need to be specified",
+            "type": "integer",
+            "format": "int32"
+          },
+          "runAs": {
+            "description": "Manage the user to run Juicefs Runtime",
+            "$ref": "#/definitions/.User"
+          },
+          "tieredstore": {
+            "description": "Tiered storage used by JuiceFS",
+            "default": {},
+            "$ref": "#/definitions/.TieredStore"
+          },
+          "worker": {
+            "description": "The component spec of JuiceFS worker",
+            "default": {},
+            "$ref": "#/definitions/.JuiceFSCompTemplateSpec"
+          }
+        }
+      },
+      ".Level": {
+        "description": "Level describes configurations a tier needs. \u003cbr\u003e Refer to \u003ca href=\"https://docs.alluxio.io/os/user/stable/en/core-services/Caching.html#configuring-tiered-storage\"\u003eConfiguring Tiered Storage\u003c/a\u003e for more info",
+        "type": "object",
+        "required": [
+          "mediumtype"
+        ],
+        "properties": {
+          "high": {
+            "description": "Ratio of high watermark of the tier (e.g. 0.9)",
+            "type": "string"
+          },
+          "low": {
+            "description": "Ratio of low watermark of the tier (e.g. 0.7)",
+            "type": "string"
+          },
+          "mediumtype": {
+            "description": "Medium Type of the tier. One of the three types: `MEM`, `SSD`, `HDD`",
+            "type": "string",
+            "default": ""
+          },
+          "path": {
+            "description": "File paths to be used for the tier. Multiple paths are supported. Multiple paths should be separated with comma. For example: \"/mnt/cache1,/mnt/cache2\".",
+            "type": "string"
+          },
+          "quota": {
+            "description": "Quota for the whole tier. (e.g. 100Gi) Please note that if there're multiple paths used for this tierstore, the quota will be equally divided into these paths. If you'd like to set quota for each, path, see QuotaList for more information.",
+            "$ref": "#/definitions/k8s.io.apimachinery.pkg.api.resource.Quantity"
+          },
+          "quotaList": {
+            "description": "QuotaList are quotas used to set quota on multiple paths. Quotas should be separated with comma. Quotas in this list will be set to paths with the same order in Path. For example, with Path defined with \"/mnt/cache1,/mnt/cache2\" and QuotaList set to \"100Gi, 50Gi\", then we get 100GiB cache storage under \"/mnt/cache1\" and 50GiB under \"/mnt/cache2\". Also note that num of quotas must be consistent with the num of paths defined in Path.",
+            "type": "string"
+          }
+        }
+      },
+      ".Mount": {
+        "description": "Mount describes a mounting. \u003cbr\u003e Refer to \u003ca href=\"https://docs.alluxio.io/os/user/stable/en/ufs/S3.html\"\u003eAlluxio Storage Integrations\u003c/a\u003e for more info",
+        "type": "object",
+        "properties": {
+          "encryptOptions": {
+            "description": "The secret information",
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/.EncryptOption"
+            }
+          },
+          "mountPoint": {
+            "description": "MountPoint is the mount point of source.",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of mount",
+            "type": "string"
+          },
+          "options": {
+            "description": "The Mount Options. \u003cbr\u003e Refer to \u003ca href=\"https://docs.alluxio.io/os/user/stable/en/reference/Properties-List.html\"\u003eMount Options\u003c/a\u003e.  \u003cbr\u003e The option has Prefix 'fs.' And you can Learn more from \u003ca href=\"https://docs.alluxio.io/os/user/stable/en/ufs/S3.html\"\u003eThe Storage Integrations\u003c/a\u003e",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "path": {
+            "description": "The path of mount, if not set will be /{Name}",
+            "type": "string"
+          },
+          "readOnly": {
+            "description": "Optional: Defaults to false (read-write).",
+            "type": "boolean"
+          },
+          "shared": {
+            "description": "Optional: Defaults to false (shared).",
+            "type": "boolean"
+          }
+        }
+      },
+      ".Runtime": {
+        "description": "Runtime describes a runtime to be used to support dataset",
+        "type": "object",
+        "properties": {
+          "category": {
+            "description": "Category the runtime object belongs to (e.g. Accelerate)",
+            "type": "string"
+          },
+          "masterReplicas": {
+            "description": "Runtime master replicas",
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "description": "Name of the runtime object",
+            "type": "string"
+          },
+          "namespace": {
+            "description": "Namespace of the runtime object",
+            "type": "string"
+          },
+          "type": {
+            "description": "Runtime object's type (e.g. Alluxio)",
+            "type": "string"
+          }
+        }
+      },
+      ".RuntimeCondition": {
+        "description": "Condition describes the state of the cache at a certain point.",
+        "type": "object",
+        "required": [
+          "type",
+          "status"
+        ],
+        "properties": {
+          "lastProbeTime": {
+            "description": "The last time this condition was updated.",
+            "default": {},
+            "$ref": "#/definitions/v1.Time"
+          },
+          "lastTransitionTime": {
+            "description": "Last time the condition transitioned from one status to another.",
+            "default": {},
+            "$ref": "#/definitions/v1.Time"
+          },
+          "message": {
+            "description": "A human readable message indicating details about the transition.",
+            "type": "string"
+          },
+          "reason": {
+            "description": "The reason for the condition's last transition.",
+            "type": "string"
+          },
+          "status": {
+            "description": "Status of the condition, one of True, False, Unknown.",
+            "type": "string",
+            "default": ""
+          },
+          "type": {
+            "description": "Type of cache condition.",
+            "type": "string",
+            "default": ""
+          }
+        }
+      },
+      ".RuntimeStatus": {
+        "description": "RuntimeStatus defines the observed state of Runtime",
+        "type": "object",
+        "required": [
+          "valueFile",
+          "masterPhase",
+          "workerPhase",
+          "desiredWorkerNumberScheduled",
+          "currentWorkerNumberScheduled",
+          "workerNumberReady",
+          "desiredMasterNumberScheduled",
+          "currentMasterNumberScheduled",
+          "masterNumberReady",
+          "fusePhase",
+          "currentFuseNumberScheduled",
+          "desiredFuseNumberScheduled",
+          "fuseNumberReady"
+        ],
+        "properties": {
+          "apiGateway": {
+            "description": "APIGatewayStatus represents rest api gateway status",
+            "$ref": "#/definitions/.APIGatewayStatus"
+          },
+          "cacheStates": {
+            "description": "CacheStatus represents the total resources of the dataset.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "conditions": {
+            "description": "Represents the latest available observations of a ddc runtime's current state.",
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/.RuntimeCondition"
+            },
+            "x-kubernetes-patch-merge-key": "type",
+            "x-kubernetes-patch-strategy": "merge"
+          },
+          "currentFuseNumberScheduled": {
+            "description": "The total number of nodes that can be running the runtime Fuse pod (including nodes correctly running the runtime Fuse pod).",
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "currentMasterNumberScheduled": {
+            "description": "The total number of nodes that should be running the runtime pod (including nodes correctly running the runtime master pod).",
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "currentWorkerNumberScheduled": {
+            "description": "The total number of nodes that can be running the runtime worker pod (including nodes correctly running the runtime worker pod).",
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "desiredFuseNumberScheduled": {
+            "description": "The total number of nodes that should be running the runtime Fuse pod (including nodes correctly running the runtime Fuse pod).",
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "desiredMasterNumberScheduled": {
+            "description": "The total number of nodes that should be running the runtime pod (including nodes correctly running the runtime master pod).",
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "desiredWorkerNumberScheduled": {
+            "description": "The total number of nodes that should be running the runtime worker pod (including nodes correctly running the runtime worker pod).",
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "fuseNumberAvailable": {
+            "description": "The number of nodes that should be running the runtime Fuse pod and have one or more of the runtime Fuse pod running and available (ready for at least spec.minReadySeconds)",
+            "type": "integer",
+            "format": "int32"
+          },
+          "fuseNumberReady": {
+            "description": "The number of nodes that should be running the runtime Fuse pod and have one or more of the runtime Fuse pod running and ready.",
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "fuseNumberUnavailable": {
+            "description": "The number of nodes that should be running the runtime fuse pod and have none of the runtime fuse pod running and available (ready for at least spec.minReadySeconds)",
+            "type": "integer",
+            "format": "int32"
+          },
+          "fusePhase": {
+            "description": "FusePhase is the Fuse running phase",
+            "type": "string",
+            "default": ""
+          },
+          "fuseReason": {
+            "description": "Reason for the condition's last transition.",
+            "type": "string"
+          },
+          "masterNumberReady": {
+            "description": "The number of nodes that should be running the runtime worker pod and have zero or more of the runtime master pod running and ready.",
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "masterPhase": {
+            "description": "MasterPhase is the master running phase",
+            "type": "string",
+            "default": ""
+          },
+          "masterReason": {
+            "description": "Reason for Master's condition transition",
+            "type": "string"
+          },
+          "mountTime": {
+            "description": "MountTime represents time last mount happened if Mounttime is earlier than master starting time, remount will be required",
+            "$ref": "#/definitions/v1.Time"
+          },
+          "selector": {
+            "description": "Selector is used for auto-scaling",
+            "type": "string"
+          },
+          "setupDuration": {
+            "description": "Duration tell user how much time was spent to setup the runtime",
+            "type": "string"
+          },
+          "valueFile": {
+            "description": "config map used to set configurations",
+            "type": "string",
+            "default": ""
+          },
+          "workerNumberAvailable": {
+            "description": "The number of nodes that should be running the runtime worker pod and have one or more of the runtime worker pod running and available (ready for at least spec.minReadySeconds)",
+            "type": "integer",
+            "format": "int32"
+          },
+          "workerNumberReady": {
+            "description": "The number of nodes that should be running the runtime worker pod and have one or more of the runtime worker pod running and ready.",
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "workerNumberUnavailable": {
+            "description": "The number of nodes that should be running the runtime worker pod and have none of the runtime worker pod running and available (ready for at least spec.minReadySeconds)",
+            "type": "integer",
+            "format": "int32"
+          },
+          "workerPhase": {
+            "description": "WorkerPhase is the worker running phase",
+            "type": "string",
+            "default": ""
+          },
+          "workerReason": {
+            "description": "Reason for Worker's condition transition",
+            "type": "string"
+          }
+        }
+      },
+      ".SecretKeySelector": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "description": "The required key in the secret",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of required secret",
+            "type": "string"
+          }
+        }
+      },
+      ".TargetDataset": {
+        "description": "TargetDataset defines the target dataset of the DataLoad",
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "description": "Name defines name of the target dataset",
+            "type": "string",
+            "default": ""
+          },
+          "namespace": {
+            "description": "Namespace defines namespace of the target dataset",
+            "type": "string"
+          }
+        }
+      },
+      ".TargetPath": {
+        "description": "TargetPath defines the target path of the DataLoad",
+        "type": "object",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "description": "Path defines path to be load",
+            "type": "string",
+            "default": ""
+          },
+          "replicas": {
+            "description": "Replicas defines how many replicas will be loaded",
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      ".TieredStore": {
+        "description": "TieredStore is a description of the tiered store",
+        "type": "object",
+        "properties": {
+          "levels": {
+            "description": "configurations for multiple tiers",
+            "type": "array",
+            "items": {
+              "default": {},
+              "$ref": "#/definitions/.Level"
+            }
+          }
+        }
+      },
+      ".User": {
+        "description": "User explains the user and group to run a Container",
+        "type": "object",
+        "required": [
+          "uid",
+          "gid",
+          "user",
+          "group"
+        ],
+        "properties": {
+          "gid": {
+            "description": "The gid to run the alluxio runtime",
+            "type": "integer",
+            "format": "int64"
+          },
+          "group": {
+            "description": "The group name to run the alluxio runtime",
+            "type": "string",
+            "default": ""
+          },
+          "uid": {
+            "description": "The uid to run the alluxio runtime",
+            "type": "integer",
+            "format": "int64"
+          },
+          "user": {
+            "description": "The user name to run the alluxio runtime",
+            "type": "string",
+            "default": ""
+          }
+        }
+      },
+      ".VersionSpec": {
+        "description": "VersionSpec represents the settings for the  version that fluid is orchestrating.",
+        "type": "object",
+        "properties": {
+          "image": {
+            "description": "Image (e.g. alluxio/alluxio)",
+            "type": "string"
+          },
+          "imagePullPolicy": {
+            "description": "One of the three policies: `Always`, `IfNotPresent`, `Never`",
+            "type": "string"
+          },
+          "imageTag": {
+            "description": "Image tag (e.g. 2.3.0-SNAPSHOT)",
+            "type": "string"
+          }
         }
       }
     }
   }
-}

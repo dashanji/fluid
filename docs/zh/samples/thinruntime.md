@@ -68,11 +68,11 @@ $ kubectl create -f minio.yaml
 部署成功后，Kubernetes集群内的其他Pod即可通过`http://minio:9000`的Minio API端点访问Minio存储系统中的数据。上述YAML配置中，我们设置Minio的用户名与密码均为`minioadmin`，并在启动Minio存储时默认创建一个名为`my-first-bucket`的存储桶，在接下来的示例中，我们将会访问`my-first-bucket`这个存储桶中的数据。在执行以下步骤前，首先执行以下命令，在`my-first-bucket`中存储示例文件：
 
 ```
-$ kubectl exec -it minio-69c555f4cf-np59j -- bash -c "echo fluid-minio-test > testfile"
+$ kubectl exec -it minio-69c555f4cf-np59j   -- bash -c "echo fluid-minio-test > testfile"
 
-$ kubectl exec -it minio-69c555f4cf-np59j -- bash -c "mc cp ./testfile local/my-first-bucket/" 
+$ kubectl exec -it minio-69c555f4cf-np59j   -- bash -c "mc cp ./testfile local/my-first-bucket/" 
 
-$ kubectl exec -it  minio-69c555f4cf-np59j -- bash -c "mc cat local/my-first-bucket/testfile"
+$ kubectl exec -it  minio-69c555f4cf-np59j   -- bash -c "mc cat local/my-first-bucket/testfile"
 fluid-minio-test
 ```
 
