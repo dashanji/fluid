@@ -62,7 +62,7 @@ $ kubectl apply -n argo -f https://github.com/argoproj/argo-workflows/releases/d
 - Install the fluid platform. You can use the following command to install the fluid platform:
 
 ```bash
-$ sed -i "s/719fc87/$(git rev-parse --short HEAD)/" charts/fluid/fluid/values.yaml && helm install fluid ./charts/fluid/fluid -n fluid-system --create-namespace
+$ sed -i "s/7b0a6b1cc/$(git rev-parse --short HEAD)/" charts/fluid/fluid/values.yaml && helm install fluid ./charts/fluid/fluid -n fluid-system --create-namespace
 ```
 
 - Install the vineyard runtime and dataset. You can use the following command to install the vineyard runtime and dataset:
